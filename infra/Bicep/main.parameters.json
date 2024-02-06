@@ -1,0 +1,13 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appName": { "value": "#{appName}#" },
+    "environmentCode": { "value": "#{environmentNameLower}#" },
+    "location": { "value": "#{location}#" },
+    "storageSku": { "value": "#{storageSku}#" },
+    "functionAppSku": { "value": "#{functionAppSku}#" },
+    "functionAppSkuFamily": { "value": "#{functionAppSkuFamily}#" },
+    "functionAppSkuTier": { "value": "#{functionAppSkuTier}#" }
+  }
+}

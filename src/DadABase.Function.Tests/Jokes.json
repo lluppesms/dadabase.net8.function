@@ -1,0 +1,8 @@
+{ "Jokes": [
+  { "JokeCategoryTxt": "Chickens", "JokeTxt": "What do you call a chicken crossing the road? Poultry in motion.", "Attribution": "", "ImageTxt": "A chicken running across the road"},
+  { "JokeCategoryTxt": "Chickens", "JokeTxt": "What do you get when a chicken lays an egg on top of a barn? An eggroll.", "Attribution": "", "ImageTxt": "A chicken on the roof of a barn"},
+  { "JokeCategoryTxt": "Engineers", "JokeTxt": "Normal: if it ain't broke, don't fix it. Engineer: if it ain't broke, it doesn't have enough features yet.", "Attribution": "", "ImageTxt": "A broken toy"},
+  { "JokeCategoryTxt": "Engineers", "JokeTxt": "Optimist: the glass is half-full. Pessimist: the glass is half-empty. Engineer: that glass is twice as big as it needs to be.", "Attribution": "", "ImageTxt": "A half-full glass"},
+  { "JokeCategoryTxt": "Jobs", "JokeTxt": "I want a job cleaning mirrors. It's a job I can see myself doing.", "Attribution": "", "ImageTxt": "A person cleaning a mirror"},
+  { "JokeCategoryTxt": "Jobs", "JokeTxt": "I wasn't happy being a glue salesman, but I stuck with it.", "Attribution": "", "ImageTxt": "Someone selling a bottle of glue"}
+]}

@@ -1,0 +1,14 @@
+﻿global using Dadabase.Function.Helpers;
+global using DadABase.Data;
+global using DadABase.Repositories;
+global using Microsoft.Azure.Functions.Worker;
+global using Microsoft.Azure.Functions.Worker.Http;
+global using Microsoft.Azure.Functions.Worker.Middleware;
+global using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
+global using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
+global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.Extensions.Hosting;
+global using Microsoft.Extensions.Logging;
+global using System.Net;
+global using System.Reflection;
+global using System.Runtime.Versioning;

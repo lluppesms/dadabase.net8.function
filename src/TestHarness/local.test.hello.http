@@ -1,0 +1,18 @@
+
+# See also: http://localhost:7298/api/swagger/ui
+
+@baseUrl = http://localhost:7298/api
+### ---------------------------------------------------------------------------
+### Hello World Nobody Test, URL Test, Body Test
+### ---------------------------------------------------------------------------
+GET {{baseUrl}}/hello
+
+### ---------------------------------------------------------------------------
+GET {{baseUrl}}/hello?name=URL-Test
+
+### ---------------------------------------------------------------------------
+POST {{baseUrl}}/hello
+content-type: text/json
+
+{ 'name': 'Body-Test' }
+

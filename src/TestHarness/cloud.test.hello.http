@@ -1,0 +1,18 @@
+
+# See also: https://yourURL.azurewebsites.net/api/swagger/ui
+
+@baseUrl = https://yourURL.azurewebsites.net/api
+### ---------------------------------------------------------------------------
+### Hello World Nobody Test, URL Test, Body Test
+### ---------------------------------------------------------------------------
+GET {{baseUrl}}/hello
+
+### ---------------------------------------------------------------------------
+GET {{baseUrl}}/hello?name=URL-Test
+
+### ---------------------------------------------------------------------------
+POST {{baseUrl}}/hello
+content-type: text/json
+
+{ 'name': 'Body-Test' }
+

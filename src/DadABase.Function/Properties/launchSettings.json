@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Function.NET8": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7298",
+      "launchBrowser": false
+    }
+  }
+}

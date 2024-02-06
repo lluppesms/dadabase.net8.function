@@ -1,0 +1,16 @@
+{
+    "appInsightsSuffix": "insights",
+    "appServicePlanSuffix": "appsvc",
+    "bastionAbbreviation": "bastion",
+    "cosmosDatabase": "cosmos",
+    "keyVaultAbbreviation": "vault",
+    "logWorkspaceSuffix": "logworkspace",
+    "networkSecurityGroupAbbreviation": "nsg",
+    "privateEndpointAbbreviation": "pe",
+    "publicIpAbbreviation": "pip",
+    "serviceBus": "svcbus",
+    "sqlAbbreviation": "sql",
+    "storageAccountSuffix": "store",
+    "vnetAbbreviation": "vnet",
+    "webSiteSuffix": "web"
+}
