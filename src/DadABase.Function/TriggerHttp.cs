@@ -1,5 +1,3 @@
-using Microsoft.OpenApi.Models;
-
 namespace Dadabase.Function;
 
 public class TriggerHttp(ILoggerFactory loggerFactory, IJokeRepository jokeRepo)

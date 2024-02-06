@@ -49,6 +49,6 @@ stages:
 - ${{ if eq(lower(parameters.deployMultiStage), 'true') }}:
   - template: pipes/infra-only-pipe.yml
     parameters:
-      environments: ['DEV','QA']
+      environments: ['DEV','PROD']
       runMSDevSecOpsScan: ${{ parameters.runMSDevSecOpsScan }}
       runGHASScan: ${{ parameters.runGHASScan }}

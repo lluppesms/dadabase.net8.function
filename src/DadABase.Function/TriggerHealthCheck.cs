@@ -6,6 +6,7 @@ public class TriggerHealthCheck(ILoggerFactory loggerFactory)
 
     [OpenApiOperation(operationId: "Hello", tags: new[] { "name" }, Summary = "Hello", Description = "Returns a greeting", Visibility = OpenApiVisibilityType.Important)]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(string), Summary = "Greeting", Description = "This returns a greeting")]
+    [OpenApiParameter(name: "name", In = ParameterLocation.Path, Required = false, Type = typeof(string), Description = "Name")]
     [Function("Hello")]
     public HttpResponseData Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "hello/{name}")] HttpRequestData req, string name)
     {

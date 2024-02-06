@@ -24,10 +24,16 @@ trigger:
 
 # ----------------------------------------------------------------------------------------------------
 parameters:
-  - name: deployMultiStage
-    displayName: Multi-Stage Deploy
-    type: boolean
-    default: false
+  - name: deployToEnvironment
+    displayName: Deploy To
+    type: string
+    values:
+      - DEMO
+      - DEV
+      - QA
+      - PROD
+      - MULTIPLE
+    default: DEMO
   - name: runGHASScan
     displayName: Run GHAS Scan
     type: boolean
@@ -36,19 +42,37 @@ parameters:
     displayName: Run MS DevSecOps Scan
     type: boolean
     default: false
+  # - name: deployMultiStage
+  #   displayName: Multi-Stage Deploy
+  #   type: boolean
+  #   default: false
 
 # ----------------------------------------------------------------------------------------------------
 stages:
-- ${{ if eq(lower(parameters.deployMultiStage), 'false') }}:
+- ${{ if ne(parameters.deployToEnvironment, 'MULTIPLE') }}:
   - template: pipes/infra-and-function-pipe.yml
     parameters:
-      environments: ['DEMO']
+      environments: ['${{ parameters.deployToEnvironment }}']
       runMSDevSecOpsScan: ${{ parameters.runMSDevSecOpsScan }}
       runGHASScan: ${{ parameters.runGHASScan }}
 
-- ${{ if eq(lower(parameters.deployMultiStage), 'true') }}:
+- ${{ if eq(parameters.deployToEnvironment, 'MULTIPLE') }}:
   - template: pipes/infra-and-function-pipe.yml
     parameters:
-      environments: ['DEV','QA']
+      environments: ['DEV','PROD']
       runMSDevSecOpsScan: ${{ parameters.runMSDevSecOpsScan }}
       runGHASScan: ${{ parameters.runGHASScan }}
+
+# - ${{ if eq(lower(parameters.deployMultiStage), 'false') }}:
+#   - template: pipes/infra-and-function-pipe.yml
+#     parameters:
+#       environments: ['DEMO']
+#       runMSDevSecOpsScan: ${{ parameters.runMSDevSecOpsScan }}
+#       runGHASScan: ${{ parameters.runGHASScan }}
+
+# - ${{ if eq(lower(parameters.deployMultiStage), 'true') }}:
+#   - template: pipes/infra-and-function-pipe.yml
+#     parameters:
+#       environments: ['DEV','PROD']
+#       runMSDevSecOpsScan: ${{ parameters.runMSDevSecOpsScan }}
+#       runGHASScan: ${{ parameters.runGHASScan }}

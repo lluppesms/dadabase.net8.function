@@ -53,6 +53,6 @@ stages:
   - template: pipes/function-only-pipe.yml
     parameters:
       variableGroupName: 'Dadabase.Function.Keys'
-      environments: ['DEV','QA']
+      environments: ['DEV','PROD']
       runMSDevSecOpsScan: ${{ parameters.runMSDevSecOpsScan }}
       runGHASScan: ${{ parameters.runGHASScan }}

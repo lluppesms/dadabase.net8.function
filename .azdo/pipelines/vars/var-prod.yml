@@ -9,3 +9,5 @@
 variables:
   - name: thisDoesntWork_serviceConnectionName
     value: 'Prod Service Connection'
+  - name: environmentSpecificFunctionName
+    value: ''

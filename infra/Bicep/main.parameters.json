@@ -8,6 +8,7 @@
     "storageSku": { "value": "#{storageSku}#" },
     "functionAppSku": { "value": "#{functionAppSku}#" },
     "functionAppSkuFamily": { "value": "#{functionAppSkuFamily}#" },
-    "functionAppSkuTier": { "value": "#{functionAppSkuTier}#" }
+    "functionAppSkuTier": { "value": "#{functionAppSkuTier}#" },
+    "environmentSpecificFunctionName": { "value": "#{environmentSpecificFunctionName}#" }
   }
 }

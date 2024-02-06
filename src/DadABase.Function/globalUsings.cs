@@ -9,6 +9,7 @@ global using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Hosting;
 global using Microsoft.Extensions.Logging;
+global using Microsoft.OpenApi.Models;
 global using System.Net;
 global using System.Reflection;
 global using System.Runtime.Versioning;

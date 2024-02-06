@@ -7,6 +7,8 @@ param environmentCode string = 'dev'
 param location string = resourceGroup().location
 //param keyVaultOwnerUserId string = ''
 
+param environmentSpecificFunctionName string = ''
+
 // optional parameters
 @allowed(['Standard_LRS','Standard_GRS','Standard_RAGRS'])
 param storageSku string = 'Standard_LRS'
@@ -33,6 +35,7 @@ module resourceNames 'resourcenames.bicep' = {
     environmentCode: environmentCode
     functionStorageNameSuffix: 'func'
     dataStorageNameSuffix: 'data'
+    environmentSpecificFunctionName: environmentSpecificFunctionName
   }
 }
 

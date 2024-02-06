@@ -7,6 +7,7 @@ param environmentCode string = 'azd'
 
 param functionStorageNameSuffix string = 'func'
 param dataStorageNameSuffix string = 'data'
+param environmentSpecificFunctionName string = ''
 
 // --------------------------------------------------------------------------------
 // pull resource abbreviations from a common JSON file
@@ -18,9 +19,10 @@ var sanitizedAppName = replace(replace(lowerAppName, '-', ''), '_', '')
 var sanitizedEnvironment = toLower(environmentCode)
 
 // --------------------------------------------------------------------------------
+// if there's an environment specific function name specified, use that, otherwise if it's azd -- 
 // other resource names can be changed if desired, but if using the "azd deploy" command it expects the
 // function name to be exactly "{appName}function" so don't change the functionAppName format if using azd
-var functionAppName = environmentCode == 'azd' ? '${lowerAppName}function' : toLower('${lowerAppName}-${sanitizedEnvironment}')
+var functionAppName = environmentSpecificFunctionName == '' ? environmentCode == 'azd' ? '${lowerAppName}function' : toLower('${lowerAppName}-${sanitizedEnvironment}') : environmentSpecificFunctionName
 var baseStorageName = toLower('${sanitizedAppName}${sanitizedEnvironment}str')
 
 // --------------------------------------------------------------------------------
