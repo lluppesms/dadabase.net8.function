@@ -36,7 +36,10 @@ jobs:
 
   steps:
   - bash: |
-      if [ $(environmentSpecificFunctionName) == '' ]; then
+      echo "environmentSpecificFunctionName=$(environmentSpecificFunctionName)"
+      echo "appName=$(appName)"
+      echo "environmentName=$(environmentName)"
+      if [[ '$(environmentSpecificFunctionName)' == '' ]]; then
         echo "Using environment coded app name: $(appName)-$(environmentName)"
         functionAppName=$(echo "$(appName)-$(environmentName)" | tr '[:upper:]' '[:lower:]')
       else 
@@ -103,6 +106,7 @@ jobs:
         echo "environmentSpecificFunctionName=$(environmentSpecificFunctionName)"
         echo "functionAppName=$(functionAppName)"
         echo "serviceConnectionName=$(serviceConnectionName)"
+        echo "appName=$(appName)"
         echo "environmentName=$(environmentName)"
         echo "Directory of pipeline workspace:"
         tree -L 4 $(Pipeline.Workspace)

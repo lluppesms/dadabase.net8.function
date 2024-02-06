@@ -16,15 +16,11 @@ stages:
   - stage: ScanApplication
     displayName: Scan Application
     jobs:
-    # - ${{ if or(eq(lower(parameters.runMSDevSecOpsScan), 'true'), eq(lower(parameters.runGHASScan), 'true')) }}:
     - template: templates/scan-code-template.yml
       parameters:
         environmentName: 'DEMO'
         runMSDevSecOpsScan: ${{ parameters.runMSDevSecOpsScan }}
         runGHASScan: ${{ parameters.runGHASScan }}
-    # - ${{ else }}:
-    #   - job: ScanSkippedJob
-    #     displayName: Skipping Scan
 
 - ${{ each environmentName in parameters.environments }} :
   - stage: CreateInfra${{ environmentName }}

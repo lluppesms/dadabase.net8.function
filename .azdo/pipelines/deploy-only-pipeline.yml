@@ -22,8 +22,9 @@ trigger:
 # ----------------------------------------------------------------------------------------------------
 resources:
   pipelines:
-  - pipeline: dadabase.func.function.only # internal identifier for the resource
-    source: dadabase.func.function.only   # name of the pipeline that produces an artifact
+  - pipeline: dadabase.func.build.deploy # internal identifier for the resource
+    source: dadabase.func.infra.and.build.deploy   # name of the pipeline that produces an artifact
+    #source: dadabase.func.build.deploy   # name of the pipeline that produces an artifact
     branch: main                          # should only allow builds from the main branch to be used
 
 # ----------------------------------------------------------------------------------------------------
@@ -45,10 +46,10 @@ stages:
   - template: pipes/deploy-only-pipe.yml
     parameters:
       environments: [ '${{ parameters.deployToEnvironment }}' ]
-      pipelineResourceIdentifier: 'dadabase.func.function.only'
+      pipelineResourceIdentifier: 'dadabase.func.build.deploy'
 
 - ${{ if eq(parameters.deployToEnvironment, 'MULTIPLE') }}:
   - template: pipes/deploy-only-pipe.yml
     parameters:
       environments: ['DEV','PROD']
-      pipelineResourceIdentifier: 'dadabase.func.function.only'
+      pipelineResourceIdentifier: 'dadabase.func.build.deploy'

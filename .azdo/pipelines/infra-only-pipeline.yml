@@ -4,7 +4,7 @@
 # ------------------------------------------------------------------------------------------------------------------------
 name: $(date:yyyy).$(date:MM).$(date:dd)$(rev:.r)
 pool:
-  vmImage: ubuntu-latest  #windows-latest
+  vmImage: ubuntu-latest
 variables:
   - group: Dadabase.Function.Keys
 
@@ -24,10 +24,16 @@ trigger:
 
 # ----------------------------------------------------------------------------------------------------
 parameters:
-  - name: deployMultiStage
-    displayName: Multi-Stage Deploy
-    type: boolean
-    default: false
+  - name: deployToEnvironment
+    displayName: Deploy To
+    type: string
+    values:
+      - DEMO
+      - DEV
+      - QA
+      - PROD
+      - MULTIPLE
+    default: DEMO
   - name: runGHASScan
     displayName: Run GHAS Scan
     type: boolean
@@ -39,14 +45,14 @@ parameters:
 
 # ----------------------------------------------------------------------------------------------------
 stages:
-- ${{ if eq(lower(parameters.deployMultiStage), 'false') }}:
+- ${{ if ne(parameters.deployToEnvironment, 'MULTIPLE') }}:
   - template: pipes/infra-only-pipe.yml
     parameters:
-      environments: ['DEMO']
+      environments: ['${{ parameters.deployToEnvironment }}']
       runMSDevSecOpsScan: ${{ parameters.runMSDevSecOpsScan }}
       runGHASScan: ${{ parameters.runGHASScan }}
 
-- ${{ if eq(lower(parameters.deployMultiStage), 'true') }}:
+- ${{ if eq(parameters.deployToEnvironment, 'MULTIPLE') }}:
   - template: pipes/infra-only-pipe.yml
     parameters:
       environments: ['DEV','PROD']
