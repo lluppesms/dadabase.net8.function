@@ -20,7 +20,7 @@ It can also be deployed via GitHub Actions and Azure DevOps CLI (azd), although 
 
 ## Deployment Options
 
-1. [Deploy using Azure DevOps](./.azdo/readme.md)
+1. [Deploy using Azure DevOps](./.azdo/pipelines/readme.md)
 
 1. *[Deploy using AZD Command Line Tool](./Docs/AzdDeploy.md)
 (untested for .NET8...  coming soon!)*
