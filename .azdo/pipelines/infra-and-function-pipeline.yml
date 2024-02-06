@@ -42,10 +42,6 @@ parameters:
     displayName: Run MS DevSecOps Scan
     type: boolean
     default: false
-  # - name: deployMultiStage
-  #   displayName: Multi-Stage Deploy
-  #   type: boolean
-  #   default: false
 
 # ----------------------------------------------------------------------------------------------------
 stages:
@@ -62,17 +58,3 @@ stages:
       environments: ['DEV','PROD']
       runMSDevSecOpsScan: ${{ parameters.runMSDevSecOpsScan }}
       runGHASScan: ${{ parameters.runGHASScan }}
-
-# - ${{ if eq(lower(parameters.deployMultiStage), 'false') }}:
-#   - template: pipes/infra-and-function-pipe.yml
-#     parameters:
-#       environments: ['DEMO']
-#       runMSDevSecOpsScan: ${{ parameters.runMSDevSecOpsScan }}
-#       runGHASScan: ${{ parameters.runGHASScan }}
-
-# - ${{ if eq(lower(parameters.deployMultiStage), 'true') }}:
-#   - template: pipes/infra-and-function-pipe.yml
-#     parameters:
-#       environments: ['DEV','PROD']
-#       runMSDevSecOpsScan: ${{ parameters.runMSDevSecOpsScan }}
-#       runGHASScan: ${{ parameters.runGHASScan }}

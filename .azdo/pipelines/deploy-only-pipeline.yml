@@ -24,7 +24,7 @@ resources:
   pipelines:
   - pipeline: dadabase.func.function.only # internal identifier for the resource
     source: dadabase.func.function.only   # name of the pipeline that produces an artifact
-    branch: main                    # should only allow builds from the main branch to be used
+    branch: main                          # should only allow builds from the main branch to be used
 
 # ----------------------------------------------------------------------------------------------------
 parameters:
