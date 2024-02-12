@@ -84,9 +84,14 @@ jobs:
     #     script: Get-ChildItem -Path Env:\ | Format-List
 
   - bash: |
-      echo "Directory of pipeline workspace:"
-      tree $(Pipeline.Workspace)
-    displayName: 'Display Files (Linux)'
+      echo "##[group]Display All Environment Variables:"
+      printenv | sort
+      echo "##[endgroup]"
+      echo "----------------------------------------"
+      echo "##[group]Directory of pipeline workspace:"
+      tree -L 4 $(Pipeline.Workspace)
+      echo "##[endgroup]"
+    displayName: 'Display Variables and Files'
     continueOnError: true
 
   # Login is needed if you are pulling Bicep files from an Azure Container Registry

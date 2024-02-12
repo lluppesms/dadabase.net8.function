@@ -1,14 +1,24 @@
-# ------------------------------------------------------------------------------------------------------------------------
-# Pipeline to build and deploy Azure Resources and Application
-# See readme file for info about the contents of the variable group
-# ------------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------
+# Pipeline to deploy a Function App
+# See readme file for info about variable group "Dadabase.Function.Keys"
+# ----------------------------------------------------------------------------------------------------
 name: $(date:yyyy).$(date:MM).$(date:dd)$(rev:.r)
 pool:
   vmImage: ubuntu-latest
+
+# ----------------------------------------------------------------------------------------------------
+resources:
+  repositories:
+  - repository: devops.library
+    type: git
+    name: devops.library
+    ref: master
+
+# ----------------------------------------------------------------------------------------------------
 variables:
   - group: Dadabase.Function.Keys
 
-# ------------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------
 trigger:
   # since this repo has both AzDO and GHA pipelines, nothing is run automatically...
   - none
@@ -16,11 +26,14 @@ trigger:
   # branches:
   #   include:
   #     - main
-  #   exclude:
-  #     - '**/*.md'
   # paths:
   #   include:
-  #     - 'Durable.Demo/*'
+  #     - FunctionApp
+  #   exclude: 
+  #     - '**/*.yml'
+  #     - '**/*.yaml'
+  #     - '**/*.bicep'
+  #     - '**/*.md'
 
 # ----------------------------------------------------------------------------------------------------
 parameters:
@@ -46,15 +59,16 @@ parameters:
 # ----------------------------------------------------------------------------------------------------
 stages:
 - ${{ if ne(parameters.deployToEnvironment, 'MULTIPLE') }}:
-  - template: pipes/infra-and-function-pipe.yml
+  - template: /azdo/Pipelines/pipes/function-only-pipe.yml@devops.library
     parameters:
       environments: ['${{ parameters.deployToEnvironment }}']
       runMSDevSecOpsScan: ${{ parameters.runMSDevSecOpsScan }}
       runGHASScan: ${{ parameters.runGHASScan }}
 
 - ${{ if eq(parameters.deployToEnvironment, 'MULTIPLE') }}:
-  - template: pipes/infra-and-function-pipe.yml
+  - template: /azdo/Pipelines/pipes/function-only-pipe.yml@devops.library
     parameters:
+      variableGroupName: 'Dadabase.Function.Keys'
       environments: ['DEV','PROD']
       runMSDevSecOpsScan: ${{ parameters.runMSDevSecOpsScan }}
       runGHASScan: ${{ parameters.runGHASScan }}

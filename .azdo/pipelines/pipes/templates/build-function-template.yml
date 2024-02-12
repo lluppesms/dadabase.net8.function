@@ -13,6 +13,7 @@ jobs:
 
 - job: Build${{ parameters.environmentName }}Function
   displayName: Build ${{ parameters.environmentName }} Function
+  
   variables:
     - name: environmentName
       value: ${{ parameters.environmentName }}
@@ -29,15 +30,6 @@ jobs:
       - template: ../../vars/var-prod.yml
 
   steps:
-  # - bash: |
-  #     echo "Build.ArtifactStagingDirectory=$(Build.ArtifactStagingDirectory)"
-  #     echo "System.DefaultWorkingDirectory=$(System.DefaultWorkingDirectory)"
-  #     echo "Build.BuildId=$(Build.BuildId)"
-  #     echo "appName=$(appName)"
-  #     echo "appFolderName=$(appFolderName)"
-  #   continueOnError: true
-  #   displayName: 'Display Variables'
-
   - task: Bash@3
     displayName: 'Display Variables'
     continueOnError: true
@@ -47,17 +39,15 @@ jobs:
         echo "Build.ArtifactStagingDirectory=$(Build.ArtifactStagingDirectory)"
         echo "System.DefaultWorkingDirectory=$(System.DefaultWorkingDirectory)"
         echo "Build.BuildId=$(Build.BuildId)"
-        echo "Environment Variables:"
-        env | sort
-
-  - task: CmdLine@2
-    inputs:
-      script: |
-        echo "Directory of pipeline workspace:"
+        echo "----------------------------------------"
+        echo "##[group]Display All Environment Variables:"
+        printenv | sort
+        echo "##[endgroup]"
+        echo "----------------------------------------"
+        echo "##[group]Directory of pipeline workspace:"
         tree -L 4 $(Pipeline.Workspace)
-    displayName: 'Display Files'
-    continueOnError: true
-
+        echo "##[endgroup]"
+    
   - task: DotNetCoreCLI@2
     displayName: 'Build project'
     inputs:

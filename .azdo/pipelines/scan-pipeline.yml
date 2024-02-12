@@ -29,11 +29,8 @@ parameters:
 
 # ----------------------------------------------------------------------------------------------------
 stages:
-- stage: ScanApplication
-  displayName: Scan Application
-  jobs:
-  - template: pipes/templates/scan-code-template.yml
-    parameters:
-      environmentName: 'DEMO'
-      runGHASScan: ${{ parameters.runGHASScan }}
-      runMSDevSecOpsScan: ${{ parameters.runMSDevSecOpsScan }}
+- template: pipes/scan-code-pipe.yml
+  parameters:
+    runGHASScan: ${{ parameters.runGHASScan }}
+    runMSDevSecOpsScan: ${{ parameters.runMSDevSecOpsScan }}
+
