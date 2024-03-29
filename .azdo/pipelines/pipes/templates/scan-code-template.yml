@@ -56,21 +56,30 @@ jobs:
     # - task: AdvancedSecurity-Publish@1 
 
     - task: CmdLine@2
+      displayName: 'Display Variables and Tree'
       inputs:
         script: |
           echo "parameters.continueOnScanError=${{ parameters.continueOnScanError }}"
+          echo "appFolderName=$(appFolderName)"
+          echo "appSolutionName=$(appSolutionName)"
+          echo "appProjectName=$(appProjectName)"
           echo "appProjectFolderName=$(appProjectFolderName)"
           echo "workingDirectoryInfra=$(workingDirectoryInfra)"
           echo "workingDirectoryIgnore=$(workingDirectoryIgnore)"
-          echo "Project Path: $(Build.SourcesDirectory)/$(appProjectFolderName)/*.(appProjectExtension)"
+          echo "Project Path: $(Build.SourcesDirectory)/$(appProjectFolderName)/*.$(appProjectExtension)"
           echo "Build.SourcesDirectory=$(Build.SourcesDirectory)"
+          echo "----------------------------------------"
+          echo "##[group]Display All Environment Variables:"
+          printenv | sort
+          echo "##[endgroup]"
           echo "------------------------------------------------"
-          echo "Directory of Project Files: $(Build.SourcesDirectory)/$(appProjectFolderName)"
-          tree L -3 $(Build.SourcesDirectory)/$(appProjectFolderName)
+          echo "##[group]Directory of Project Files: $(Build.SourcesDirectory)/$(appProjectFolderName)"
+          tree -L 4 $(Build.SourcesDirectory)/$(appProjectFolderName)
+          echo "##[endgroup]"
           echo "------------------------------------------------"
-          echo "Directory of Full Staging Directory: $(Build.SourcesDirectory)"
+          echo "##[group]Directory of Full Staging Directory: $(Build.SourcesDirectory)"
           tree -L 4 $(Build.SourcesDirectory)
-      displayName: 'Display Variables and Tree'
+          echo "##[endgroup]"
       continueOnError: true
 
     - task: AdvancedSecurity-Codeql-Init@1
@@ -152,8 +161,18 @@ jobs:
         echo "workingDirectoryIgnore=${{variables.workingDirectoryIgnore}}"
         echo "continueAfterScanErrors=$(continueAfterScanErrors)"
         echo "parameters.continueOnScanError=${{parameters.continueOnScanError}}"
-        echo "Directory Listing for $(Pipeline.Workspace)"
+        echo "sourceVariableFile=$(sourceVariableFile)"
+        echo "appProjectFolderName=$(appProjectFolderName)"
+        echo "workingDirectoryInfra=$(workingDirectoryInfra)"
+        echo "workingDirectoryIgnore=$(workingDirectoryIgnore)"
+        echo "----------------------------------------"
+        echo "##[group]Display All Environment Variables:"
+        printenv | sort
+        echo "##[endgroup]"
+        echo "----------------------------------------"
+        echo "##[group]Directory Listing for $(Pipeline.Workspace)"
         tree -L 4 $(Pipeline.Workspace)
+        echo "##[endgroup]"
       displayName: 'Display Variables'
       continueOnError: true
 

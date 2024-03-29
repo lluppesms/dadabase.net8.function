@@ -27,6 +27,7 @@ resource storageAccountResource 'Microsoft.Storage/storageAccounts@2019-06-01' =
     tags: tags
     kind: 'StorageV2'
     properties: {
+        publicNetworkAccess: publicNetworkAccess
         networkAcls: {
             bypass: 'AzureServices'
             defaultAction: allowNetworkAccess

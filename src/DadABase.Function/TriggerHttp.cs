@@ -17,6 +17,15 @@ public class TriggerHttp(ILoggerFactory loggerFactory, IJokeRepository jokeRepo)
         return response;
     }
 
+
+    [OpenApiOperation(operationId: "Joke", tags: new[] { "name" }, Summary = "Get Random Joke", Description = "Gets a Random Joke and returns plain text", Visibility = OpenApiVisibilityType.Important)]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(string), Summary = "A Joke", Description = "This returns a joke in plain text")]
+    [Function("Joke")]
+    public HttpResponseData GetJokeText([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
+    {
+        return GetRandomJokeText(req);
+    }
+
     [OpenApiOperation(operationId: "RandomJoke", tags: new[] { "name" }, Summary = "Get Random Joke", Description = "Gets a Random Joke and returns plain text", Visibility = OpenApiVisibilityType.Important)]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(string), Summary = "A Joke", Description = "This returns a joke in plain text")]
     [Function("RandomJoke")]
