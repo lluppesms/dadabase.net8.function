@@ -98,8 +98,8 @@ jobs:
   # -script: az login --service-principal -u $(principalId) -p $(clientSecret) --tenant $(tenantId)
   #   displayName: 'az login'
 
-  - task: qetza.replacetokens.replacetokens-task.replacetokens@3
-    displayName: 'Create Parameter File'
+  - task: qetza.replacetokens.replacetokens-task.replacetokens@5
+    displayName: 'Update Parameter File'
     inputs:
       targetFiles: $(parameterFile)
       tokenPrefix: '#{'

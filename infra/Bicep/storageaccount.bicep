@@ -10,15 +10,17 @@ param commonTags object = {}
 param storageSku string = 'Standard_LRS'
 param storageAccessTier string = 'Hot'
 param containerNames array = ['input','output']
+@allowed(['Enabled','Disabled'])
+param publicNetworkAccess string = 'Enabled'
 @allowed(['Allow','Deny'])
-param allowNetworkAccess string = 'Allow'
+param allowNetworkAccess string = 'Deny' // except for Azure Services
 
 // --------------------------------------------------------------------------------
 var templateTag = { TemplateFile: '~storageAccount.bicep' }
 var tags = union(commonTags, templateTag)
 
 // --------------------------------------------------------------------------------
-resource storageAccountResource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+resource storageAccountResource 'Microsoft.Storage/storageAccounts@2023-01-01' = {
     name: storageAccountName
     location: location
     sku: {
@@ -55,7 +57,7 @@ resource storageAccountResource 'Microsoft.Storage/storageAccounts@2019-06-01' =
     }
 }
 
-resource blobServiceResource 'Microsoft.Storage/storageAccounts/blobServices@2019-06-01' = {
+resource blobServiceResource 'Microsoft.Storage/storageAccounts/blobServices@2023-01-01' = {
     parent: storageAccountResource
     name: 'default'
     properties: {
@@ -70,7 +72,7 @@ resource blobServiceResource 'Microsoft.Storage/storageAccounts/blobServices@201
     }
 }
 
-resource containers 'Microsoft.Storage/storageAccounts/blobServices/containers@2019-06-01' = [for containerName in containerNames: {
+resource containers 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-01-01' = [for containerName in containerNames: {
     name: '${containerName}'
     parent: blobServiceResource
     properties: {
