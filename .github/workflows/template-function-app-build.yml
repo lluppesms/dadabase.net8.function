@@ -26,7 +26,7 @@ jobs:
 
     env:
       CONFIGURATION: Release
-      DOTNET_CORE_VERSION: 6.0.x
+      DOTNET_CORE_VERSION: 8.0.x
       artifactName: functionapp
 
     steps:
