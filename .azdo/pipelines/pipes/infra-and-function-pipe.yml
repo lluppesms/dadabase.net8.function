@@ -5,6 +5,8 @@ parameters:
 - name: environments
   type: object
   default: ['DEV']
+- name: parseBicepOutputs
+  default: false
 - name: runGHASScan
   default: 'false'
 - name: runMSDevSecOpsScan
@@ -40,7 +42,7 @@ stages:
     - template: templates/create-infra-template.yml
       parameters:
         environmentName: ${{ environmentName }}
-        parseBicepOutputs: true
+        parseBicepOutputs: ${{ parameters.parseBicepOutputs }}
 
   - stage: Deploy${{ environmentName }}App
     displayName: Deploy ${{ environmentName }} App

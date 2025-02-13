@@ -3,9 +3,9 @@
 # ----------------------------------------------------------------------------------------------------
 variables:
   - name: serviceConnectionName
-    value: 'DEV Service Connection'
+    value: 'DEMO Service Connection'
   - name: serviceConnectionDEV
-    value: 'DEV Service Connection'
+    value: 'DEMO Service Connection'
   - name: serviceConnectionQA
     value: 'QA Service Connection'
   - name: serviceConnectionProd

@@ -8,7 +8,7 @@ variables:
   #   value: 'this is unique to you - define in a variable group or on the pipeline variables!'
 
   - name: resourceGroupPrefix
-    value: 'rg_dadabase_func'
+    value: 'rg_dbf_az'
   - name: applicationTitle
     value: 'Net8 Isolated Function Demo'
   - name: location
