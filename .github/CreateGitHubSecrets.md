@@ -32,9 +32,9 @@ To create these additional secrets and variables, customize and run this command
 Required Repository Variables:
 
 ``` bash
-gh variable set RESOURCEGROUPPREFIX -b rg_dbf_gh
+gh variable set RESOURCEGROUP_PREFIX -b rg_dbf_gh
+gh variable set RESOURCEGROUP_LOCATION -b eastus2
 gh variable set APP_NAME -b <yourInitials>-dbf-gh
-gh variable set AZURE_LOCATION -b eastus2
 gh variable set STORAGE_SKU -b Standard_LRS
 gh variable set FUNCTION_APP_SKU -b Y1
 gh variable set FUNCTION_APP_SKU_FAMILY -b Y
