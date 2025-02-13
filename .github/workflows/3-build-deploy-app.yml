@@ -4,7 +4,7 @@
 # You need to set up secrets in the GitHub Secrets Repository before running these workflows.
 #   See Docs\CreateGitHubSecrets\.md for details
 # ------------------------------------------------------------------------------------------------------------------------
-name: deploy.functionapp
+name: 3.build.deploy.app
 on:
   workflow_dispatch:
     inputs:

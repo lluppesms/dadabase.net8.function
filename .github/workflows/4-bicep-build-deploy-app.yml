@@ -4,7 +4,7 @@
 # You need to set up secrets in the GitHub Secrets Repository before running these workflows.
 #   See Docs\CreateGitHubSecrets\.md for details
 # ------------------------------------------------------------------------------------------------------------------------
-name: deploy.infra.and.function
+name: 4.bicep.build.deploy.app
 on: 
   workflow_dispatch:
     inputs:
