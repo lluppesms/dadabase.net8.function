@@ -65,6 +65,10 @@ jobs:
       if: ${{ inputs.runCreateInfra }}
       uses: actions/checkout@v4
 
+    - name: Get the current date
+      id: get-date
+      run: echo "DATE_TIME_STAMP=$(date +'%Y%m%d%H%M')" >> $GITHUB_OUTPUT
+
     - name: Display Variables and Files
       run: |-
         echo 'env.generatedAppEnvName=${{ env.generatedAppEnvName }}'
@@ -127,19 +131,11 @@ jobs:
       with:
         scope: resourcegroup
         region: ${{ vars.RESOURCEGROUP_LOCATION }}
+        deploymentName: ${{ inputs.templateFile }}-rg-${{ vars.RESOURCEGROUP_LOCATION }}-${{ steps.get-date.outputs.DATE_TIME_STAMP}}
         resourceGroupName: ${{ env.generatedResourceGroupName }}
         template: ${{ inputs.templatePath }}${{ inputs.templateFile }}
+        parameters: ${{ inputs.templatePath }}${{ inputs.parameterFile }}
         deploymentMode: ${{ inputs.deploymentMode }} # Must be: Incremental | Complete | Validation
-        # parameters: ${{ inputs.templatePath }}${{ inputs.parameterFile }}
-        parameters: >
-          environmentCode=${{ inputs.envCode }}
-          location=${{ vars.RESOURCEGROUP_LOCATION }}
-          appName=${{ vars.APP_NAME }}
-          storageSku=${{ vars.STORAGE_SKU }}
-          functionAppSku=${{ vars.FUNCTION_APP_SKU }}
-          functionAppSkuFamily=${{ vars.FUNCTION_APP_SKU_FAMILY }}
-          functionAppSkuTier=${{ vars.FUNCTION_APP_SKU_TIER }}
-
 
     - name: Display Output
       if: ${{ inputs.runCreateInfra }}
