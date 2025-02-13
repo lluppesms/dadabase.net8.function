@@ -135,7 +135,6 @@ jobs:
           environmentCode=${{ inputs.envCode }}
           location=${{ vars.RESOURCEGROUP_LOCATION }}
           appName=${{ vars.APP_NAME }}
-          keyVaultOwnerUserId=${{ secrets.KEYVAULT_OWNER_USERID }}
           storageSku=${{ vars.STORAGE_SKU }}
           functionAppSku=${{ vars.FUNCTION_APP_SKU }}
           functionAppSkuFamily=${{ vars.FUNCTION_APP_SKU_FAMILY }}
