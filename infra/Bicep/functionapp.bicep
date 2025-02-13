@@ -1,5 +1,6 @@
 // ----------------------------------------------------------------------------------------------------
 // This BICEP file will create an .NET 8 Isolated Azure Function
+// Changed to use Managed Identity Storage (no connection string)
 // ----------------------------------------------------------------------------------------------------
 param functionAppName string
 param functionAppServicePlanName string
@@ -118,9 +119,13 @@ resource functionAppResource 'Microsoft.Web/sites@2023-01-01' = {
           value: functionStorageAccountConnectionString
         }
         {
-          name: 'AzureWebJobsStorage'
-          value: functionStorageAccountConnectionString
+          name: 'AzureWebJobsStorage__accountname'
+          value: storageAccountResource.name
         }
+        // {
+        //   name: 'AzureWebJobsStorage'
+        //   value: functionStorageAccountConnectionString
+        // }
         {
           name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
           value: functionStorageAccountConnectionString

@@ -2,8 +2,7 @@
 // Main Bicep file that creates all of the Azure Resources for one environment
 // --------------------------------------------------------------------------------
 param appName string = ''
-@allowed(['azd','gha','azdo','dev','demo','qa','stg','ct','prod'])
-param environmentCode string = 'dev'
+param environmentCode string = 'azd'
 param location string = resourceGroup().location
 //param keyVaultOwnerUserId string = ''
 
@@ -16,6 +15,9 @@ param functionAppSku string = 'Y1'
 param functionAppSkuFamily string = 'Y'
 param functionAppSkuTier string = 'Dynamic'
 
+@description('Add Role Assignments for the user assigned identity?')
+param addRoleAssignments bool = true
+
 // calculated variables disguised as parameters
 param runDateTime string = utcNow()
 
@@ -26,6 +28,7 @@ var commonTags = {
   Application: appName
   Environment: environmentCode
 }
+var resourceGroupName = resourceGroup().name
 
 // --------------------------------------------------------------------------------
 module resourceNames 'resourcenames.bicep' = {
@@ -50,11 +53,27 @@ module logAnalyticsWorkspaceModule 'loganalyticsworkspace.bicep' = {
 }
 
 // --------------------------------------------------------------------------------
+module identity 'identity.bicep' = {
+  name: 'app-identity${deploymentSuffix}'
+  params: {
+    identityName: resourceNames.outputs.userAssignedIdentityName
+    location: location
+  }
+}
+module roleAssignments 'role-assignments.bicep' = if (addRoleAssignments) {
+  name: 'identity-access${deploymentSuffix}'
+  params: {
+    storageAccountName: functionStorageModule.outputs.name
+    identityPrincipalId: identity.outputs.managedIdentityPrincipalId
+  }
+}
+
+// --------------------------------------------------------------------------------
 module functionStorageModule 'storageaccount.bicep' = {
   name: 'functionstorage${deploymentSuffix}'
   params: {
-    storageAccountName: resourceNames.outputs.functionStorageName
     storageSku: storageSku
+    storageAccountName: resourceNames.outputs.functionStorageName
     location: location
     commonTags: commonTags
   }
@@ -62,7 +81,7 @@ module functionStorageModule 'storageaccount.bicep' = {
 
 module functionModule 'functionapp.bicep' = {
   name: 'function${deploymentSuffix}'
-  dependsOn: [ functionStorageModule ]
+  dependsOn: [ roleAssignments ]
   params: {
     functionAppName: resourceNames.outputs.functionAppName
     functionAppServicePlanName: resourceNames.outputs.functionAppServicePlanName
@@ -95,3 +114,6 @@ module functionAppSettingsModule 'functionappsettings.bicep' = {
     }
   }
 }
+
+output SUBSCRIPTION_ID string = subscription().subscriptionId
+output RESOURCE_GROUP_NAME string = resourceGroupName

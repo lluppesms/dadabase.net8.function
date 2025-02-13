@@ -1,0 +1,57 @@
+# ------------------------------------------------------------------------------------------------------------------------
+# GHA Workflow to deploy Azure Resources Only
+# ------------------------------------------------------------------------------------------------------------------------
+# FYI: You need to set up some secrets before running this workflows - see CreateGitHubSecrets.md for details.
+# ------------------------------------------------------------------------------------------------------------------------
+name: 1.bicep.only
+
+on: 
+  workflow_dispatch:
+    inputs:
+      deployEnvironment:
+        description: 'Environment'
+        required: true
+        default: 'dev' 
+        type: choice
+        options:
+          - dev
+          - qa
+          - prod
+      runSecurityScan:
+        description: 'Run Security Scan'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - true
+          - false
+      logLevel:
+        description: 'Log level'
+        required: false
+        default: 'warning' 
+        type: choice
+        options:
+          - info
+          - warning
+          - debug 
+  
+# ------------------------------------------------------------------------------------------------------------------------
+jobs:
+  scan-code:
+    name: Scan Source Code
+    uses: ./.github/workflows/template-scan-code.yml
+    secrets: inherit
+    with:
+      runSecurityScan: ${{ inputs.runSecurityScan == 'true' }}
+
+# ------------------------------------------------------------------------------------------------------------------------
+  create-infra:
+    name: Create Infra ${{ inputs.deployEnvironment }}
+    uses: ./.github/workflows/template-create-infra.yml
+    secrets: inherit
+    with:
+      envCode: ${{ inputs.deployEnvironment }}
+      templatePath: './infra/Bicep/'
+      templateFile: 'main.bicep'
+      parameterFile: 'main.parameters.gha.bicepparam'
+      parameterFileReplaceTokens: 'true'
