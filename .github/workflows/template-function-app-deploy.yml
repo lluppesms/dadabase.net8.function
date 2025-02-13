@@ -1,0 +1,50 @@
+# ------------------------------------------------------------------------------------------------------------------------
+# GHA Reusable Called Workflow to deploy an already built Function App
+# ------------------------------------------------------------------------------------------------------------------------
+# You need to set up secrets in the GitHub Secrets Repository before running these workflows.
+#   See Docs\CreateGitHubSecrets\.md for details
+# ------------------------------------------------------------------------------------------------------------------------
+name: template.deploy.function
+run-name: Deploy Function App
+on:
+  workflow_call:
+    inputs:
+      envCode:
+        required: true
+        type: string
+
+# ------------------------------------------------------------------------------------------------------------------------
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    
+    environment:
+      name: ${{ inputs.envCode }}
+
+    env:
+      artifactName: functionapp
+      generatedAppEnvName: ${{ vars.APP_NAME }}-${{ inputs.envCode }}
+
+    steps:
+    - name: Download build artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: ${{ env.artifactName }}
+
+    # - name: List Files
+    #   run: 
+    #     tree ${{ env.GITHUB_ACTION_PATH }}
+    #   continue-on-error: true
+
+    - name: Log into Azure
+      uses: azure/login@v1
+      with:
+        creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
+        #creds: ...${secrets.AZURE_CREDENTIALS}... # old way of doing this, but the secrets are not as secure...
+
+    - name: Deploy Azure Function Zip
+      uses: Azure/functions-action@v1
+      with:
+        app-name: ${{ env.generatedAppEnvName }}
+        package: .

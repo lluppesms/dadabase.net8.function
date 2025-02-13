@@ -1,0 +1,18 @@
+# ------------------------------------------------------------------------------------------------------------------------
+# GHA Workflow to Scan Bicep on a schedule
+# ------------------------------------------------------------------------------------------------------------------------
+name: 7.scan.devsecops.scheduled
+
+on:
+    workflow_dispatch:
+#     schedule:
+#     - cron: '27 3 * * 1'
+
+# ------------------------------------------------------------------------------------------------------------------------
+jobs:
+  scan-code:
+    name: Scan Source Code
+    uses: ./.github/workflows/template-scan-code.yml
+    secrets: inherit
+    with:
+      runSecurityScan: true

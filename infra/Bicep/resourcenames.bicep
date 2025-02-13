@@ -11,7 +11,7 @@ param environmentSpecificFunctionName string = ''
 
 // --------------------------------------------------------------------------------
 // pull resource abbreviations from a common JSON file
-var resourceAbbreviations = loadJsonContent('./resourceAbbreviations.json')
+var resourceAbbreviations = loadJsonContent('./data/resourceAbbreviations.json')
 
 // --------------------------------------------------------------------------------
 var lowerAppName = replace(toLower(appName), ' ', '')
@@ -26,6 +26,7 @@ var functionAppName = environmentSpecificFunctionName == '' ? environmentCode ==
 var baseStorageName = toLower('${sanitizedAppName}${sanitizedEnvironment}str')
 
 // --------------------------------------------------------------------------------
+output userAssignedIdentityName string = toLower('${sanitizedAppName}-${sanitizedEnvironment}-${resourceAbbreviations.identitySuffix}')
 output logAnalyticsWorkspaceName string =  toLower('${lowerAppName}-${sanitizedEnvironment}-${resourceAbbreviations.logWorkspaceSuffix}')
 output functionAppName string            = functionAppName
 output functionAppServicePlanName string = '${functionAppName}-${resourceAbbreviations.appServicePlanSuffix}'

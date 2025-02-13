@@ -16,9 +16,9 @@ resource logWorkspaceResource 'Microsoft.OperationalInsights/workspaces@2021-06-
   tags: tags
   properties: {
     sku: {
-      name: 'PerGB2018'
+        name: 'PerGB2018' // Standard
     }
-    retentionInDays: 30
+    retentionInDays: 90
     features: {
       searchVersion: 1
     }

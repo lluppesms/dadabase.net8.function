@@ -1,6 +1,10 @@
 *.json
 *.ps1
 !main.parameters.json
+!main.azdo.parameters.json
+!main.gha.parameters.json
+!main.parameters.azdo.json
+!main.parameters.gha.json
 !bicepconfig.json
 !resourceAbbreviations.json
-!bicepconfig.json
+!roleDefinitions.json
