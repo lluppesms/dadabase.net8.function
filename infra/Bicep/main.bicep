@@ -76,6 +76,8 @@ module functionStorageModule 'storageaccount.bicep' = {
     storageAccountName: resourceNames.outputs.functionStorageName
     location: location
     commonTags: commonTags
+    allowNetworkAccess: 'Allow'
+    publicNetworkAccess: 'Enabled'
   }
 }
 
