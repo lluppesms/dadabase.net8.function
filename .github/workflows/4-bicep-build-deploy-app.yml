@@ -51,12 +51,6 @@ jobs:
     secrets: inherit
     with:
       runSecurityScan: ${{ inputs.runSecurityScan == 'true' }}
-    permissions:
-      id-token: write
-      contents: write
-      actions: read
-      pages: write
-      security-events: write
 
 # ------------------------------------------------------------------------------------------------------------------------
   build-app:
