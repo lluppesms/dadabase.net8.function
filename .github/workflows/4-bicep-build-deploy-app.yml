@@ -37,11 +37,13 @@ on:
 
 # ------------------------------------------------------------------------------------------------------------------------
 permissions:
+  # these are only required for workflows in private repositories (?)
   id-token: write
   contents: write
   actions: read
   pages: write
-  security-events: write
+  # required for all workflows
+  security-events: write # needed for security scan to write to logs
 
 # ------------------------------------------------------------------------------------------------------------------------
 jobs:
