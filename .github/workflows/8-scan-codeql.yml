@@ -15,7 +15,7 @@ on:
 # ------------------------------------------------------------------------------------------------------------------------
 permissions:
   id-token: write
-  contents: read
+  contents: write
   actions: read
   pages: write
   security-events: write
@@ -39,7 +39,7 @@ jobs:
 
       # only required for workflows in private repositories
       actions: read
-      contents: read
+      contents: write
 
     strategy:
       fail-fast: false
