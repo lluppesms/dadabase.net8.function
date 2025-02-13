@@ -61,5 +61,5 @@ jobs:
       envCode: ${{ inputs.deployEnvironment }}
       templatePath: './infra/Bicep/'
       templateFile: 'main.bicep'
-      parameterFile: 'main.parameters.gha.bicepparam'
+      parameterFile: 'main.gha.bicepparam'
       parameterFileReplaceTokens: 'true'

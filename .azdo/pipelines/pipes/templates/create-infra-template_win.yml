@@ -10,7 +10,7 @@ parameters:
 - name: templateFileName
   default: 'main.bicep'
 - name: parameterFileName
-  default: 'main.bicepparam'
+  default: 'main.az.bicepparam'
 - name: deploymentMode
   default: 'Incremental'  # 'Incremental' | 'Complete' | 'Validation'
 - name: parseBicepOutputs
