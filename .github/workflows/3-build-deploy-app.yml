@@ -35,8 +35,16 @@ on:
           - warning
           - debug 
 
-jobs:
 # ------------------------------------------------------------------------------------------------------------------------
+permissions:
+  id-token: write
+  contents: read
+  actions: read
+  pages: write
+  security-events: write
+
+# ------------------------------------------------------------------------------------------------------------------------
+jobs:
   scan-code:
     name: Scan Source Code
     uses: ./.github/workflows/template-scan-code.yml
