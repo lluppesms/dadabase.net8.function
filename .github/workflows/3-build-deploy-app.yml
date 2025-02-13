@@ -8,35 +8,17 @@ name: 3.build.deploy.app
 on:
   workflow_dispatch:
     inputs:
-      deployToDemo:
-        required: false
-        default: 'true'
+      deployEnvironment:
+        description: 'Environment'
+        required: true
+        default: 'dev' 
         type: choice
         options:
-          - true
-          - false
-      deployToDev:
-        required: false
-        default: 'false'
-        type: choice
-        options:
-          - true
-          - false
-      deployToQA:
-        required: false
-        default: 'false'
-        type: choice
-        options:
-          - true
-          - false
-      deployToProd:
-        required: false
-        default: 'false'
-        type: choice
-        options:
-          - true
-          - false
-      securityScan:
+          - dev
+          - qa
+          - prod
+      runSecurityScan:
+        description: 'Run Security Scan'
         required: false
         default: 'false'
         type: choice
@@ -55,49 +37,27 @@ on:
 
 jobs:
 # ------------------------------------------------------------------------------------------------------------------------
+  scan-code:
+    name: Scan Source Code
+    uses: ./.github/workflows/template-scan-code.yml
+    secrets: inherit
+    with:
+      runSecurityScan: ${{ inputs.runSecurityScan == 'true' }}
+
+# ------------------------------------------------------------------------------------------------------------------------
   build-app:
     name: Build Function App
     uses: ./.github/workflows/template-function-app-build.yml
     secrets: inherit
     with:
-      envCode: 'demo'
-      rootDirectory: 'src/Durable.Demo'
-      securityScan: ${{ inputs.securityScan }}
-      continueOnScanError: true
+      envCode: ${{ inputs.deployEnvironment }}
+      rootDirectory: 'src/DadABase.Function'
 
 # ------------------------------------------------------------------------------------------------------------------------
   deploy-app-demo:
-    if: inputs.deployToDemo == 'true'
-    name: Deploy Demo App
+    name: Deploy App
     needs: build-app
     uses: ./.github/workflows/template-function-app-deploy.yml
     secrets: inherit
     with:
-      envCode: 'demo'
-
-  deploy-app-dev:
-    if: inputs.deployToDev == 'true'
-    name: Deploy Dev App
-    needs: build-app
-    uses: ./.github/workflows/template-function-app-deploy.yml
-    secrets: inherit
-    with:
-      envCode: 'dev'
-
-  deploy-app-qa:
-    if: inputs.deployToQA == 'true'
-    name: Deploy QA App
-    needs: build-app
-    uses: ./.github/workflows/template-function-app-deploy.yml
-    secrets: inherit
-    with:
-      envCode: 'qa'
-
-  deploy-app-prod:
-    if: inputs.deployToProd == 'true'
-    name: Deploy Prod App
-    needs: build-app
-    uses: ./.github/workflows/template-function-app-deploy.yml
-    secrets: inherit
-    with:
-      envCode: 'prod'
+      envCode: ${{ inputs.deployEnvironment }}
