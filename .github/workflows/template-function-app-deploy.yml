@@ -39,7 +39,6 @@ jobs:
 
     # https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation-create-trust
     - name: Login to Azure
-      if: ${{ inputs.runCreateInfra }}
       uses: azure/login@v2
       # Login option using OICD Federated Credentials
       with:
