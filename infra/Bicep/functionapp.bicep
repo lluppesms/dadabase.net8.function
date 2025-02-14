@@ -305,6 +305,7 @@ resource appServiceMetricLogging 'Microsoft.Insights/diagnosticSettings@2021-05-
 // --------------------------------------------------------------------------------
 output principalId string = functionAppResource.identity.principalId
 output id string = functionAppResource.id
+output hostname string = functionAppResource.properties.defaultHostName
 output name string = functionAppName
 output insightsName string = functionInsightsName
 output insightsKey string = appInsightsResource.properties.InstrumentationKey

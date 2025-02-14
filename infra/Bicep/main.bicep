@@ -119,3 +119,4 @@ module functionAppSettingsModule 'functionappsettings.bicep' = {
 
 output SUBSCRIPTION_ID string = subscription().subscriptionId
 output RESOURCE_GROUP_NAME string = resourceGroupName
+output HOST_NAME string = functionModule.outputs.hostname
