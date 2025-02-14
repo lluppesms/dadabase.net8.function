@@ -5,9 +5,6 @@
 name: $(date:yyyy).$(date:MM).$(date:dd)$(rev:.r)
 pool:
   vmImage: ubuntu-latest
-variables:
-  - group: Dadabase.Function.Keys
-  - template: vars/var-service-connections.yml
 
 # ------------------------------------------------------------------------------------------------------------------------
 trigger:
@@ -41,6 +38,11 @@ parameters:
     displayName: Run MS DevSecOps Scan
     type: boolean
     default: false
+
+# ----------------------------------------------------------------------------------------------------
+variables:
+  - group: Dadabase.Function.Keys
+  - template: vars/var-service-connections.yml
 
 # ----------------------------------------------------------------------------------------------------
 stages:

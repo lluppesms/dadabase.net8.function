@@ -30,6 +30,7 @@ resources:
 # ----------------------------------------------------------------------------------------------------
 variables:
   - group: Dadabase.Function.Keys
+  - template: vars/var-service-connections.yml
 
 # ----------------------------------------------------------------------------------------------------
 trigger:
@@ -41,7 +42,6 @@ parameters:
     displayName: Deploy To
     type: string
     values:
-      - DEMO
       - DEV
       - QA
       - PROD

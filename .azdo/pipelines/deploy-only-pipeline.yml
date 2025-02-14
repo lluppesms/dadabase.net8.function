@@ -12,8 +12,6 @@
 name: $(date:yyyy).$(date:MM).$(date:dd)$(rev:.r)
 pool:
   vmImage: ubuntu-latest
-variables:
-  - group: Dadabase.Function.Keys
 
 # ----------------------------------------------------------------------------------------------------
 trigger:
@@ -32,12 +30,16 @@ parameters:
     displayName: Deploy To
     type: string
     values:
-      - DEMO
       - DEV
       - QA
       - PROD
       - MULTIPLE
     default: DEV
+
+# ----------------------------------------------------------------------------------------------------
+variables:
+  - group: Dadabase.Function.Keys
+  - template: vars/var-service-connections.yml
 
 # ----------------------------------------------------------------------------------------------------
 stages:

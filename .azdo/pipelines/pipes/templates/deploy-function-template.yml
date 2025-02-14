@@ -25,8 +25,6 @@ jobs:
     # Bring in environment common variable file
     - template: ../../vars/var-common.yml
     # Bring in environment specific variable files
-    - ${{ if eq(lower(parameters.environmentName), 'demo') }}:
-      - template: ../../vars/var-demo.yml
     - ${{ if eq(lower(parameters.environmentName), 'dev') }}:
       - template: ../../vars/var-dev.yml
     - ${{ if eq(lower(parameters.environmentName), 'qa') }}:
@@ -35,22 +33,39 @@ jobs:
       - template: ../../vars/var-prod.yml
 
   steps:
-  - bash: |
-      echo "environmentSpecificFunctionName=$(environmentSpecificFunctionName)"
-      echo "appName=$(appName)"
-      echo "environmentName=$(environmentName)"
-      if [[ '$(environmentSpecificFunctionName)' == '' ]]; then
-        echo "Using environment coded app name: $(appName)-$(environmentName)"
-        functionAppName=$(echo "$(appName)-$(environmentName)" | tr '[:upper:]' '[:lower:]')
-      else 
-        echo "Using environment specific hard-coded name: $(environmentSpecificFunctionName)"
-        functionAppName=$(echo "$(environmentSpecificFunctionName)" | tr '[:upper:]' '[:lower:]')
-      fi
-      echo "##vso[task.setvariable variable=functionAppName]$functionAppName"
-      echo "----------------------------------------"
-      echo "Display Current Environment Variables:"
-      printenv | sort
-    displayName: 'Create Variables'
+  - task: PowerShell@2
+    displayName: Create Variables
+    inputs:
+      targetType: 'inline'
+      script: |
+        $environmentSpecificAppName=$(environmentSpecificAppName)
+        if ([string]::IsNullOrEmpty($environmentSpecificAppName)) {
+          echo "Using environment coded app name: $(appName)-$(environmentName)"
+          $functionAppName="$(appName)-$(environmentName)".ToLower()
+        } else {
+          echo "Using environment specific hard-coded name: $environmentSpecificAppName"
+          $functionAppName="$environmentSpecificAppName".ToLower()
+        }
+        echo "##vso[task.setvariable variable=functionAppName]$functionAppName"
+
+  - task: CmdLine@2
+    displayName: Display Variables and Files
+    continueOnError: true
+    inputs:
+      script: |
+        echo "environmentSpecificAppName=$(environmentSpecificAppName)"
+        echo "appName=$(appName)"
+        echo "environmentName=$(environmentName)"
+        echo "functionAppName=$(functionAppName)"
+
+        echo "##[group]Display All Environment Variables:"
+        printenv | sort
+        echo "##[endgroup]"
+
+        echo "----------------------------------------"
+        echo "##[group]Directory of pipeline workspace:"
+        tree -L 4 $(Pipeline.Workspace)
+        echo "##[endgroup]"
 
   # ----------------------------------------------------------------------------------------------------
   # if a Pipeline Resource was NOT supplied, then the artifact was built inline - just download it
@@ -103,7 +118,7 @@ jobs:
   - task: CmdLine@2
     inputs:
       script: |
-        echo "environmentSpecificFunctionName=$(environmentSpecificFunctionName)"
+        echo "environmentSpecificAppName=$(environmentSpecificAppName)"
         echo "functionAppName=$(functionAppName)"
         echo "serviceConnectionName=$(serviceConnectionName)"
         echo "appName=$(appName)"

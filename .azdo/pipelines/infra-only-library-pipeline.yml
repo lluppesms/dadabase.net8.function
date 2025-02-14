@@ -14,10 +14,6 @@ resources:
     name: devops.library
     ref: master
 
-# ----------------------------------------------------------------------------------------------------
-variables:
-  - group: Dadabase.Function.Keys
-
 # ------------------------------------------------------------------------------------------------------------------------
 trigger:
   # since this repo has both AzDO and GHA pipelines, nothing is run automatically...
@@ -38,12 +34,11 @@ parameters:
     displayName: Deploy To
     type: string
     values:
-      - DEMO
       - DEV
       - QA
       - PROD
       - MULTIPLE
-    default: DEMO
+    default: DEV
   - name: runGHASScan
     displayName: Run GHAS Scan
     type: boolean
@@ -52,6 +47,11 @@ parameters:
     displayName: Run MS DevSecOps Scan
     type: boolean
     default: false
+
+# ----------------------------------------------------------------------------------------------------
+variables:
+  - group: Dadabase.Function.Keys
+  - template: vars/var-service-connections.yml
 
 # ----------------------------------------------------------------------------------------------------
 stages:

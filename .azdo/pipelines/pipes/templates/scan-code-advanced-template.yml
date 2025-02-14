@@ -56,8 +56,6 @@ jobs:
       # Bring in environment common variable file
       - template: ../../vars/var-common.yml
       # Bring in environment specific variable files
-      - ${{ if eq(lower(parameters.environmentName), 'demo') }}:
-        - template: ../../vars/var-demo.yml
       - ${{ if eq(lower(parameters.environmentName), 'dev') }}:
         - template: ../../vars/var-dev.yml
       - ${{ if eq(lower(parameters.environmentName), 'qa') }}:
@@ -138,8 +136,6 @@ jobs:
     # Bring in environment common variable file
     - template: ../../vars/var-common.yml
     # Bring in environment specific variable files
-    - ${{ if eq(lower(parameters.environmentName), 'demo') }}:
-      - template: ../../vars/var-demo.yml
     - ${{ if eq(lower(parameters.environmentName), 'dev') }}:
       - template: ../../vars/var-dev.yml
     - ${{ if eq(lower(parameters.environmentName), 'qa') }}:
