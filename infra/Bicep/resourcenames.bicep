@@ -32,8 +32,7 @@ output functionAppServicePlanName string = '${functionAppName}-${resourceAbbrevi
 output functionInsightsName string       = '${functionAppName}-${resourceAbbreviations.appInsightsSuffix}'
 output logAnalyticsWorkspaceName string  = toLower('${lowerAppName}-${sanitizedEnvironment}-${resourceAbbreviations.logWorkspaceSuffix}')
 
-output userAssignedIdentityName string   = toLower('${sanitizedAppName}-${sanitizedEnvironment}-${resourceAbbreviations.identitySuffix}')
-// output userAssignedIdentityName string   = toLower('${lowerAppName}-${sanitizedEnvironment}-${resourceAbbreviations.identitySuffix}')
+output userAssignedIdentityName string   = toLower('${lowerAppName}-${sanitizedEnvironment}-${resourceAbbreviations.identitySuffix}')
 
 // Key Vaults and Storage Accounts can only be 24 characters long
 output keyVaultName string               = take(toLower('${sanitizedAppName}${sanitizedEnvironment}${resourceAbbreviations.keyVaultAbbreviation}'), 24)

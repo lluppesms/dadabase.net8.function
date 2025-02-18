@@ -96,7 +96,7 @@ resource functionAppResource 'Microsoft.Web/sites@2023-01-01' = {
   kind: functionKind
   tags: functionTags
   identity: {
-    type: 'SystemAssigned,UserAssigned'
+    type: 'UserAssigned' // 'SystemAssigned,UserAssigned'
     userAssignedIdentities: { '${managedIdentityId}': {} }
   }
   properties: {
