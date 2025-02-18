@@ -109,8 +109,8 @@ module keyVaultModule './security/keyvault.bicep' = {
     workspaceId: logAnalyticsWorkspaceModule.outputs.id
     managedIdentityPrincipalId: identity.outputs.managedIdentityPrincipalId
     managedIdentityTenantId: identity.outputs.managedIdentityTenantId
-    publicNetworkAccess: 'Disabled'
-    allowNetworkAccess: 'Allow'
+    publicNetworkAccess: 'Enabled'
+    allowNetworkAccess: 'Deny'
     useRBAC: true
   }
 }
