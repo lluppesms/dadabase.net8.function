@@ -123,10 +123,10 @@ resource functionAppResource 'Microsoft.Web/sites@2023-01-01' = {
       minTlsVersion: '1.2'
       appSettings: [
         // See https://learn.microsoft.com/en-us/azure/azure-functions/functions-identity-based-connections-tutorial
-        // {
-        //   name: 'AzureWebJobsStorage'
-        //   value: functionStorageAccountConnectionString
-        // }
+        {
+          name: 'AzureWebJobsStorage'
+          value: useKeyVaultConnection ? functionStorageAccountKeyVaultReference : functionStorageAccountConnectionString
+        }
         {
           name: 'AzureWebJobsStorage__accountName'
           value: functionStorageAccountName

@@ -24,7 +24,7 @@ var functionStorageAccountKeyVaultReference = '@Microsoft.KeyVault(VaultName=${k
 
 var BASE_SLOT_APPSETTINGS = {
   // See https://learn.microsoft.com/en-us/azure/azure-functions/functions-identity-based-connections-tutorial
-  //AzureWebJobsStorage: storageAccountConnectionString
+  AzureWebJobsStorage: useKeyVaultConnection ? functionStorageAccountKeyVaultReference : storageAccountConnectionString
   AzureWebJobsStorage__accountName: functionStorageAccountName
   AzureWebJobsDashboard: useKeyVaultConnection ? functionStorageAccountKeyVaultReference : storageAccountConnectionString
   WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: useKeyVaultConnection ? functionStorageAccountKeyVaultReference : storageAccountConnectionString
