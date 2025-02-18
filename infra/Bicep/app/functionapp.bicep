@@ -127,10 +127,10 @@ resource functionAppResource 'Microsoft.Web/sites@2023-01-01' = {
           name: 'AzureWebJobsStorage'
           value: useKeyVaultConnection ? functionStorageAccountKeyVaultReference : functionStorageAccountConnectionString
         }
-        {
-          name: 'AzureWebJobsStorage__accountName'
-          value: functionStorageAccountName
-        }
+        // {
+        //   name: 'AzureWebJobsStorage__accountName'
+        //   value: functionStorageAccountName
+        // }
         {
           name: 'AzureWebJobsDashboard'
           value: useKeyVaultConnection ? functionStorageAccountKeyVaultReference : functionStorageAccountConnectionString
