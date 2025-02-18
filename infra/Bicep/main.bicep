@@ -110,7 +110,7 @@ module keyVaultModule './security/keyvault.bicep' = {
     managedIdentityPrincipalId: identity.outputs.managedIdentityPrincipalId
     managedIdentityTenantId: identity.outputs.managedIdentityTenantId
     publicNetworkAccess: 'Enabled'
-    allowNetworkAccess: 'Deny'
+    allowNetworkAccess: 'Allow'
     useRBAC: true
   }
 }
