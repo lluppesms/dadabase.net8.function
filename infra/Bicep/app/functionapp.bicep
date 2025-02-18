@@ -43,11 +43,12 @@ var templateTag = { TemplateFile: '~functionapp.bicep' }
 var azdTag = { 'azd-service-name': 'function' }
 var tags = union(commonTags, templateTag)
 var functionTags = union(commonTags, templateTag, azdTag)
+var useKeyVaultConnection = false
 
 // --------------------------------------------------------------------------------
-// resource storageAccountResource 'Microsoft.Storage/storageAccounts@2019-06-01' existing = { name: functionStorageAccountName }
-// var accountKey = storageAccountResource.listKeys().keys[0].value
-// var functionStorageAccountConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${storageAccountResource.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${accountKey}'
+resource storageAccountResource 'Microsoft.Storage/storageAccounts@2019-06-01' existing = { name: functionStorageAccountName }
+var accountKey = storageAccountResource.listKeys().keys[0].value
+var functionStorageAccountConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${storageAccountResource.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${accountKey}'
 var functionStorageAccountKeyVaultReference = '@Microsoft.KeyVault(VaultName=${keyVaultName};SecretName=azurefilesconnectionstring)'
 
 resource appInsightsResource 'Microsoft.Insights/components@2020-02-02-preview' = {
@@ -132,15 +133,15 @@ resource functionAppResource 'Microsoft.Web/sites@2023-01-01' = {
         }
         {
           name: 'AzureWebJobsDashboard'
-          value: functionStorageAccountKeyVaultReference
+          value: useKeyVaultConnection ? functionStorageAccountKeyVaultReference : functionStorageAccountConnectionString
         }
         {
           name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
-          value: functionStorageAccountKeyVaultReference // functionStorageAccountConnectionString or functionStorageAccountKeyVault
+          value: useKeyVaultConnection ? functionStorageAccountKeyVaultReference : functionStorageAccountConnectionString
         }
         {
           name: 'StorageAccountConnectionString'
-          value: functionStorageAccountKeyVaultReference // functionStorageAccountConnectionString or functionStorageAccountKeyVault
+          value: useKeyVaultConnection ? functionStorageAccountKeyVaultReference : functionStorageAccountConnectionString
         }
         {
           name: 'WEBSITE_CONTENTSHARE'

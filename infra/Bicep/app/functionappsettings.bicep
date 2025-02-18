@@ -13,19 +13,21 @@ param use32BitProcess string = 'false'
 param netFrameworkVersion string = 'v8.0'
 param usePlaceholderDotNetIsolated string = '1'
 
-// resource storageAccountResource 'Microsoft.Storage/storageAccounts@2019-06-01' existing = { 
-//   name: functionStorageAccountName 
-// }
-//var accountKey = storageAccountResource.listKeys().keys[0].value
-//var storageAccountConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${storageAccountResource.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${accountKey}'
+var useKeyVaultConnection = false
+
+resource storageAccountResource 'Microsoft.Storage/storageAccounts@2019-06-01' existing = { 
+  name: functionStorageAccountName 
+}
+var accountKey = storageAccountResource.listKeys().keys[0].value
+var storageAccountConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${storageAccountResource.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${accountKey}'
 var functionStorageAccountKeyVaultReference = '@Microsoft.KeyVault(VaultName=${keyVaultName};SecretName=azurefilesconnectionstring)'
 
 var BASE_SLOT_APPSETTINGS = {
   // See https://learn.microsoft.com/en-us/azure/azure-functions/functions-identity-based-connections-tutorial
   //AzureWebJobsStorage: storageAccountConnectionString
   AzureWebJobsStorage__accountName: functionStorageAccountName
-  AzureWebJobsDashboard: functionStorageAccountKeyVaultReference
-  WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: functionStorageAccountKeyVaultReference
+  AzureWebJobsDashboard: useKeyVaultConnection ? functionStorageAccountKeyVaultReference : storageAccountConnectionString
+  WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: useKeyVaultConnection ? functionStorageAccountKeyVaultReference : storageAccountConnectionString
   WEBSITE_CONTENTSHARE: functionAppName
   APPINSIGHTS_INSTRUMENTATIONKEY: functionInsightsKey
   APPLICATIONINSIGHTS_CONNECTION_STRING: 'InstrumentationKey=${functionInsightsKey}'
