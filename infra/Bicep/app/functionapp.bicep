@@ -99,7 +99,6 @@ resource functionAppResource 'Microsoft.Web/sites@2023-01-01' = {
     //disable-next-line BCP036
     type: 'SystemAssigned, UserAssigned'
     //disable-next-line BCP036
-    // type: 'UserAssigned'
     userAssignedIdentities: { '${managedIdentityId}': {} }
   }
   properties: {
@@ -128,7 +127,7 @@ resource functionAppResource 'Microsoft.Web/sites@2023-01-01' = {
         //   value: functionStorageAccountConnectionString
         // }
         {
-          name: 'AzureWebJobsStorage__accountname'
+          name: 'AzureWebJobsStorage__accountName'
           value: functionStorageAccountName
         }
         {
