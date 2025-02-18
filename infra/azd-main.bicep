@@ -4,24 +4,24 @@
 //   ... not sure if this is a project issue or if the AZD command just doesn't support an
 //       isolated function...????
 // ----------------------------------------------------------------------------------------------------
-param name string = ''
+param appName string = ''
 param location string = ''
 param runDateTime string = utcNow()
-// param principalId string = ''
+param adminUserId string = ''
 
 // --------------------------------------------------------------------------------
 targetScope = 'subscription'
 
 // --------------------------------------------------------------------------------
 var tags = {
-    Application: name
+    Application: appName
     LastDeployed: runDateTime
 }
 var deploymentSuffix = '-${runDateTime}'
 
 // --------------------------------------------------------------------------------
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2020-06-01' = {
-    name: 'rg-${name}'
+    name: 'rg-${appName}'
     location: location
     tags: tags
 }
@@ -30,8 +30,13 @@ module resources './Bicep/main.bicep' = {
     name: 'resources-${deploymentSuffix}'
     scope: resourceGroup
     params: {
+        appName: appName
         location: location
-        appName: name
         environmentCode: 'azd'
+        storageSku: 'Standard_LRS'
+        functionAppSku: 'Y1'
+        functionAppSkuFamily: 'Y'
+        functionAppSkuTier: 'Dynamic'
+        adminUserId: adminUserId
     }
 }

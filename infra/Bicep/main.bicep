@@ -107,6 +107,7 @@ module keyVaultModule './security/keyvault.bicep' = {
     adminUserObjectIds: [ adminUserId ]
     applicationUserObjectIds: [ ]
     workspaceId: logAnalyticsWorkspaceModule.outputs.id
+    managedIdentityName: identity.outputs.managedIdentityName
     managedIdentityPrincipalId: identity.outputs.managedIdentityPrincipalId
     managedIdentityTenantId: identity.outputs.managedIdentityTenantId
     publicNetworkAccess: 'Enabled'
