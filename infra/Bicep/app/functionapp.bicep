@@ -96,7 +96,10 @@ resource functionAppResource 'Microsoft.Web/sites@2023-01-01' = {
   kind: functionKind
   tags: functionTags
   identity: {
-    type: 'UserAssigned' // 'SystemAssigned,UserAssigned'
+    //disable-next-line BCP036
+    type: 'SystemAssigned, UserAssigned'
+    //disable-next-line BCP036
+    // type: 'UserAssigned'
     userAssignedIdentities: { '${managedIdentityId}': {} }
   }
   properties: {
