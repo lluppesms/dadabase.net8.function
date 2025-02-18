@@ -16,22 +16,25 @@ parameters:
 
 # ----------------------------------------------------------------------------------------------------
 stages:
-- ${{ if or(eq(lower(parameters.runMSDevSecOpsScan), 'true'), eq(lower(parameters.runGHASScan), 'true')) }}:
-  - stage: ScanApplication
-    displayName: Scan Application
-    jobs:
+- stage: ScanApplication
+  displayName: Scan Application
+  jobs:
+  - ${{ if or(eq(lower(parameters.runMSDevSecOpsScan), 'true'), eq(lower(parameters.runGHASScan), 'true')) }}:
     - template: templates/scan-code-template.yml
       parameters:
-        environmentName: 'DEV'
+        environmentName: 'DEMO'
         runMSDevSecOpsScan: ${{ parameters.runMSDevSecOpsScan }}
         runGHASScan: ${{ parameters.runGHASScan }}
+  - ${{ else }}:
+    - job: ScanSkippedJob
+      displayName: Skipping Scan
 
 # ----------------------------------------------------------------------------------------------------
 - ${{ each environmentName in parameters.environments }}:
   - stage: CreateInfra${{ environmentName }}
     # Condition is scan complete and a single environment is being deployed, 
     # or the environment is 'dev', or if qa/prod, the previous stage (dev->qa or qa->prod) succeeded
-    # condition: or(eq(${{ parameters.singleEnvironment }}, 'true'), and(eq(upper('${{ environmentName }}'), 'DEV'), succeeded('ScanApplication')), and(eq(upper('${{ environmentName }}'), 'QA'), succeeded('CreateInfraDEV')), and(eq(upper('${{ environmentName }}'), 'PROD'), succeeded('CreateInfraQA')))
+    condition: or(eq(${{ parameters.singleEnvironment }}, 'true'), and(eq(upper('${{ environmentName }}'), 'DEV'), succeeded('ScanApplication')), and(eq(upper('${{ environmentName }}'), 'QA'), succeeded('CreateInfraDEV')), and(eq(upper('${{ environmentName }}'), 'PROD'), succeeded('CreateInfraQA')))
     displayName: Create ${{ environmentName }} Resources
     jobs:
     - template: templates/create-infra-template.yml

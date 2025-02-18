@@ -32,7 +32,7 @@ parameters:
       - DEV
       - QA
       - PROD
-      - MULTIPLE
+      - DEV-QA-PROD
     default: DEV
   - name: runGHASScan
     displayName: Run GHAS Scan
@@ -54,13 +54,13 @@ stages:
   - template: pipes/function-only-pipe.yml
     parameters:
       environments: ['${{ parameters.deployToEnvironment }}']
+      singleEnvironment: 'true'
       runMSDevSecOpsScan: ${{ parameters.runMSDevSecOpsScan }}
       runGHASScan: ${{ parameters.runGHASScan }}
 
 - ${{ if eq(parameters.deployToEnvironment, 'MULTIPLE') }}:
   - template: pipes/function-only-pipe.yml
     parameters:
-      variableGroupName: 'Dadabase.Function.Keys'
-      environments: ['DEV','PROD']
+      environments: ['DEV','QA','PROD']
       runMSDevSecOpsScan: ${{ parameters.runMSDevSecOpsScan }}
       runGHASScan: ${{ parameters.runGHASScan }}

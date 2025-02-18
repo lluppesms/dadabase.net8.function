@@ -51,7 +51,7 @@ stages:
   - template: pipes/infra-only-pipe.yml
     parameters:
       environments: ['${{ parameters.deployToEnvironment }}']
-      #singleEnvironment: 'true'
+      singleEnvironment: 'true'
       parseBicepOutputs: true
       runMSDevSecOpsScan: ${{ parameters.runMSDevSecOpsScan }}
       runGHASScan: ${{ parameters.runGHASScan }}

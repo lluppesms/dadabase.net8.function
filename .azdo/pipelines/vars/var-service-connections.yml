@@ -7,6 +7,6 @@ variables:
   - name: serviceConnectionDEV
     value: 'DEMO Service Connection'
   - name: serviceConnectionQA
-    value: 'QA Service Connection'
+    value: 'DEMO Service Connection'
   - name: serviceConnectionProd
-    value: 'PROD Service Connection'
+    value: 'DEMO Service Connection'

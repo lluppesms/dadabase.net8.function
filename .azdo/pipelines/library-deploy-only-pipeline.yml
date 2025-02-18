@@ -50,13 +50,13 @@ parameters:
 
 # ----------------------------------------------------------------------------------------------------
 stages:
-- ${{ if ne(parameters.deployToEnvironment, 'MULTIPLE') }}:
+- ${{ if ne(parameters.deployToEnvironment, 'DEV-QA-PROD') }}:
   - template: /azdo/Pipelines/pipes/deploy-only-pipe.yml@devops.library
     parameters:
       environments: [ '${{ parameters.deployToEnvironment }}' ]
       pipelineResourceIdentifier: 'dadabase.func.build.deploy'
 
-- ${{ if eq(parameters.deployToEnvironment, 'MULTIPLE') }}:
+- ${{ if eq(parameters.deployToEnvironment, 'DEV-QA-PROD') }}:
   - template: /azdo/Pipelines/pipes/deploy-only-pipe.yml@devops.library
     parameters:
       environments: ['DEV','PROD']

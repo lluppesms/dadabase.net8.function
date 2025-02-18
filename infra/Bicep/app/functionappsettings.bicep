@@ -5,7 +5,7 @@ param functionAppName string
 param functionStorageAccountName string
 param functionInsightsKey string
 param customAppSettings object = {}
-
+param keyVaultName string
 param functionsWorkerRuntime string = 'DOTNET-ISOLATED'
 param functionsExtensionVersion string = '~4'
 param nodeDefaultVersion string = '8.11.1'
@@ -13,16 +13,19 @@ param use32BitProcess string = 'false'
 param netFrameworkVersion string = 'v8.0'
 param usePlaceholderDotNetIsolated string = '1'
 
-resource storageAccountResource 'Microsoft.Storage/storageAccounts@2019-06-01' existing = { 
-  name: functionStorageAccountName 
-}
-var accountKey = storageAccountResource.listKeys().keys[0].value
-var storageAccountConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${storageAccountResource.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${accountKey}'
+// resource storageAccountResource 'Microsoft.Storage/storageAccounts@2019-06-01' existing = { 
+//   name: functionStorageAccountName 
+// }
+//var accountKey = storageAccountResource.listKeys().keys[0].value
+//var storageAccountConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${storageAccountResource.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${accountKey}'
+var functionStorageAccountKeyVaultReference = '@Microsoft.KeyVault(VaultName=${keyVaultName};SecretName=azurefilesconnectionstring)'
 
 var BASE_SLOT_APPSETTINGS = {
-  AzureWebJobsDashboard: storageAccountConnectionString
-  AzureWebJobsStorage: storageAccountConnectionString
-  WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: storageAccountConnectionString
+  // See https://learn.microsoft.com/en-us/azure/azure-functions/functions-identity-based-connections-tutorial
+  //AzureWebJobsStorage: storageAccountConnectionString
+  AzureWebJobsStorage__accountname: functionStorageAccountName
+  AzureWebJobsDashboard: functionStorageAccountKeyVaultReference
+  WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: functionStorageAccountKeyVaultReference
   WEBSITE_CONTENTSHARE: functionAppName
   APPINSIGHTS_INSTRUMENTATIONKEY: functionInsightsKey
   APPLICATIONINSIGHTS_CONNECTION_STRING: 'InstrumentationKey=${functionInsightsKey}'

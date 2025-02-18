@@ -5,6 +5,8 @@ parameters:
 - name: environments
   type: object
   default: ['DEV']
+- name: singleEnvironment
+  default: 'false'
 - name: parseBicepOutputs
   default: false
 - name: runGHASScan
@@ -14,19 +16,23 @@ parameters:
 
 # ----------------------------------------------------------------------------------------------------
 stages:
-- ${{ if or(eq(lower(parameters.runMSDevSecOpsScan), 'true'), eq(lower(parameters.runGHASScan), 'true')) }}:
-  - stage: ScanApplication
-    displayName: Scan Application
-    jobs:
+- stage: ScanApplication
+  displayName: Scan Application
+  jobs:
+  - ${{ if or(eq(lower(parameters.runMSDevSecOpsScan), 'true'), eq(lower(parameters.runGHASScan), 'true')) }}:
     - template: templates/scan-code-template.yml
       parameters:
-        environmentName: 'DEMO'
+        environmentName: 'DEV'
         runMSDevSecOpsScan: ${{ parameters.runMSDevSecOpsScan }}
         runGHASScan: ${{ parameters.runGHASScan }}
+  - ${{ else }}:
+    - job: ScanSkippedJob
+      displayName: Skipping Scan
 
 # ----------------------------------------------------------------------------------------------------
-- stage: BuildApplication
+- stage: BuildApp
   displayName: Build Application
+  dependsOn: ScanApplication
   jobs:
   - template: templates/build-function-template.yml
     parameters:
@@ -34,20 +40,21 @@ stages:
 
 # ----------------------------------------------------------------------------------------------------
 - ${{ each environmentName in parameters.environments }} :
-  - stage: CreateInfrastructure${{ environmentName }}
+  - stage: CreateInfra${{ environmentName }}
     displayName: ${{ environmentName }} Infrastructure
-    dependsOn: BuildApplication
-    condition: succeeded('BuildApplication')
+    dependsOn: BuildApp
+    # Condition is build complete and a single environment is being deployed, 
+    # or the environment is 'dev', or if qa/prod, the previous stage (dev->qa or qa->prod) succeeded
+    condition: or(eq(${{ parameters.singleEnvironment }}, 'true'), and(eq(upper('${{ environmentName }}'), 'DEV'), succeeded('BuildApp')), and(eq(upper('${{ environmentName }}'), 'QA'), succeeded('DeployAppDEV')), and(eq(upper('${{ environmentName }}'), 'PROD'), succeeded('DeployAppQA')))
     jobs:
     - template: templates/create-infra-template.yml
       parameters:
         environmentName: ${{ environmentName }}
         parseBicepOutputs: ${{ parameters.parseBicepOutputs }}
 
-  - stage: Deploy${{ environmentName }}App
+  - stage: DeployApp${{ environmentName }}
     displayName: Deploy ${{ environmentName }} App
-    dependsOn: CreateInfrastructure${{ environmentName }}
-    condition: succeeded('CreateInfrastructure${{ environmentName }}')
+    dependsOn: CreateInfra${{ environmentName }}
     jobs:
     - template: templates/deploy-function-template.yml
       parameters:

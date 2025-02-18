@@ -26,5 +26,6 @@ resource newIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-07-3
 // --------------------------------------------------------------------------------------------------------------
 output managedIdentityId string = useExistingIdentity ? existingIdentity.id : newIdentity.id
 output managedIdentityName string = useExistingIdentity ? existingIdentity.name : newIdentity.name
+output managedIdentityTenantId string = useExistingIdentity ? existingIdentity.properties.tenantId : newIdentity.properties.tenantId
 output managedIdentityClientId string = useExistingIdentity ? existingIdentity.properties.clientId : newIdentity.properties.clientId
 output managedIdentityPrincipalId string = useExistingIdentity ? existingIdentity.properties.principalId : newIdentity.properties.principalId

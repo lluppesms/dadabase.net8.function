@@ -58,17 +58,17 @@ variables:
 
 # ----------------------------------------------------------------------------------------------------
 stages:
-- ${{ if ne(parameters.deployToEnvironment, 'MULTIPLE') }}:
+- ${{ if ne(parameters.deployToEnvironment, 'DEV-QA-PROD') }}:
   - template: /azdo/Pipelines/pipes/function-only-pipe.yml@devops.library
     parameters:
       environments: ['${{ parameters.deployToEnvironment }}']
+      singleEnvironment: 'true'
       runMSDevSecOpsScan: ${{ parameters.runMSDevSecOpsScan }}
       runGHASScan: ${{ parameters.runGHASScan }}
 
-- ${{ if eq(parameters.deployToEnvironment, 'MULTIPLE') }}:
+- ${{ if eq(parameters.deployToEnvironment, 'DEV-QA-PROD') }}:
   - template: /azdo/Pipelines/pipes/function-only-pipe.yml@devops.library
     parameters:
-      variableGroupName: 'Dadabase.Function.Keys'
-      environments: ['DEV','PROD']
+      environments: ['DEV','QA','PROD']
       runMSDevSecOpsScan: ${{ parameters.runMSDevSecOpsScan }}
       runGHASScan: ${{ parameters.runGHASScan }}

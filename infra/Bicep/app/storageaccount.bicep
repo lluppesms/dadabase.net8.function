@@ -6,7 +6,7 @@ param storageAccountName string = 'mystorageaccountname'
 param location string = resourceGroup().location
 param commonTags object = {}
 
-@allowed([ 'Standard_LRS', 'Standard_GRS', 'Standard_RAGRS' ])
+// @allowed([ 'Standard_LRS', 'Standard_GRS', 'Standard_RAGRS' ])
 param storageSku string = 'Standard_LRS'
 param storageAccessTier string = 'Hot'
 param containerNames array = ['input','output']

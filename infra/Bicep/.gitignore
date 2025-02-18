@@ -1,10 +1,8 @@
 *.json
 *.ps1
 !main.parameters.json
-!main.azdo.parameters.json
-!main.gha.parameters.json
-!main.parameters.azdo.json
-!main.parameters.gha.json
+!main.az.bicepparam
+!main.gha.bicepparam
 !bicepconfig.json
 !resourceAbbreviations.json
-!roleDefinitions.json
+!data/roleDefinitions.json

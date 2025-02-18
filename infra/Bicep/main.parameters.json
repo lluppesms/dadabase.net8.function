@@ -9,6 +9,7 @@
     "functionAppSku": { "value": "#{functionAppSku}#" },
     "functionAppSkuFamily": { "value": "#{functionAppSkuFamily}#" },
     "functionAppSkuTier": { "value": "#{functionAppSkuTier}#" },
-    "environmentSpecificFunctionName": { "value": "#{environmentSpecificFunctionName}#" }
+    "environmentSpecificFunctionName": { "value": "#{environmentSpecificFunctionName}#" },
+    "adminUserId": { "value": "#{adminUserId}#" }
   }
 }

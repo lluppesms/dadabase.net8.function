@@ -11,6 +11,9 @@ param location string = resourceGroup().location
 param appInsightsLocation string = resourceGroup().location
 param commonTags object = {}
 
+param managedIdentityId string
+param keyVaultName string
+
 @allowed([ 'functionapp', 'functionapp,linux' ])
 param functionKind string = 'functionapp,linux'
 param functionHostKind string = 'linux'
@@ -42,9 +45,10 @@ var tags = union(commonTags, templateTag)
 var functionTags = union(commonTags, templateTag, azdTag)
 
 // --------------------------------------------------------------------------------
-resource storageAccountResource 'Microsoft.Storage/storageAccounts@2019-06-01' existing = { name: functionStorageAccountName }
-var accountKey = storageAccountResource.listKeys().keys[0].value
-var functionStorageAccountConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${storageAccountResource.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${accountKey}'
+// resource storageAccountResource 'Microsoft.Storage/storageAccounts@2019-06-01' existing = { name: functionStorageAccountName }
+// var accountKey = storageAccountResource.listKeys().keys[0].value
+// var functionStorageAccountConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${storageAccountResource.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${accountKey}'
+var functionStorageAccountKeyVaultReference = '@Microsoft.KeyVault(VaultName=${keyVaultName};SecretName=azurefilesconnectionstring)'
 
 resource appInsightsResource 'Microsoft.Insights/components@2020-02-02-preview' = {
   name: functionInsightsName
@@ -92,7 +96,8 @@ resource functionAppResource 'Microsoft.Web/sites@2023-01-01' = {
   kind: functionKind
   tags: functionTags
   identity: {
-    type: 'SystemAssigned'
+    type: 'SystemAssigned,UserAssigned'
+    userAssignedIdentities: { '${managedIdentityId}': {} }
   }
   properties: {
     enabled: true
@@ -114,21 +119,26 @@ resource functionAppResource 'Microsoft.Web/sites@2023-01-01' = {
       ftpsState: 'FtpsOnly'
       minTlsVersion: '1.2'
       appSettings: [
-        {
-          name: 'AzureWebJobsDashboard'
-          value: functionStorageAccountConnectionString
-        }
-        {
-          name: 'AzureWebJobsStorage__accountname'
-          value: storageAccountResource.name
-        }
+        // See https://learn.microsoft.com/en-us/azure/azure-functions/functions-identity-based-connections-tutorial
         // {
         //   name: 'AzureWebJobsStorage'
         //   value: functionStorageAccountConnectionString
         // }
         {
+          name: 'AzureWebJobsStorage__accountname'
+          value: functionStorageAccountName
+        }
+        {
+          name: 'AzureWebJobsDashboard'
+          value: functionStorageAccountKeyVaultReference
+        }
+        {
           name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
-          value: functionStorageAccountConnectionString
+          value: functionStorageAccountKeyVaultReference // functionStorageAccountConnectionString or functionStorageAccountKeyVault
+        }
+        {
+          name: 'StorageAccountConnectionString'
+          value: functionStorageAccountKeyVaultReference // functionStorageAccountConnectionString or functionStorageAccountKeyVault
         }
         {
           name: 'WEBSITE_CONTENTSHARE'
@@ -177,7 +187,7 @@ resource functionAppResource 'Microsoft.Web/sites@2023-01-01' = {
     redundancyMode: 'None'
     publicNetworkAccess: publicNetworkAccess
     storageAccountRequired: false
-    keyVaultReferenceIdentity: 'SystemAssigned'
+    keyVaultReferenceIdentity: managedIdentityId // 'SystemAssigned'
   }
 }
 
@@ -273,7 +283,6 @@ resource functionAppMetricLogging 'Microsoft.Insights/diagnosticSettings@2021-05
     ]
   }
 }
-
 // https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs
 resource functionAppAuditLogging 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
   name: '${functionAppResource.name}-logs'
@@ -303,7 +312,6 @@ resource appServiceMetricLogging 'Microsoft.Insights/diagnosticSettings@2021-05-
 }
 
 // --------------------------------------------------------------------------------
-output principalId string = functionAppResource.identity.principalId
 output id string = functionAppResource.id
 output hostname string = functionAppResource.properties.defaultHostName
 output name string = functionAppName

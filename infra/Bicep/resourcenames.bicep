@@ -26,18 +26,16 @@ var functionAppName = environmentSpecificFunctionName == '' ? environmentCode ==
 var baseStorageName = toLower('${sanitizedAppName}${sanitizedEnvironment}str')
 
 // --------------------------------------------------------------------------------
-output userAssignedIdentityName string = toLower('${sanitizedAppName}-${sanitizedEnvironment}-${resourceAbbreviations.identitySuffix}')
-output logAnalyticsWorkspaceName string =  toLower('${lowerAppName}-${sanitizedEnvironment}-${resourceAbbreviations.logWorkspaceSuffix}')
 output functionAppName string            = functionAppName
 output functionAppServicePlanName string = '${functionAppName}-${resourceAbbreviations.appServicePlanSuffix}'
-output functionInsightsName string       = '${functionAppName}-${resourceAbbreviations.appInsightsSuffix}'
 
-output cosmosAccountName string =          toLower('${sanitizedAppName}-${resourceAbbreviations.cosmosDatabase}-${sanitizedEnvironment}')
-output serviceBusName string =             toLower('${sanitizedAppName}-${resourceAbbreviations.serviceBus}-${sanitizedEnvironment}')
+output functionInsightsName string       = '${functionAppName}-${resourceAbbreviations.appInsightsSuffix}'
+output logAnalyticsWorkspaceName string  = toLower('${lowerAppName}-${sanitizedEnvironment}-${resourceAbbreviations.logWorkspaceSuffix}')
+
+output userAssignedIdentityName string   = toLower('${sanitizedAppName}-${sanitizedEnvironment}-${resourceAbbreviations.identitySuffix}')
+// output userAssignedIdentityName string   = toLower('${lowerAppName}-${sanitizedEnvironment}-${resourceAbbreviations.identitySuffix}')
 
 // Key Vaults and Storage Accounts can only be 24 characters long
 output keyVaultName string               = take(toLower('${sanitizedAppName}${sanitizedEnvironment}${resourceAbbreviations.keyVaultAbbreviation}'), 24)
 output functionStorageName string        = take('${baseStorageName}${functionStorageNameSuffix}', 24)
 output dataStorageName string            = take('${baseStorageName}${dataStorageNameSuffix}', 24)
-// output functionStorageName string        = take('${baseStorageName}${functionStorageNameSuffix}${uniqueString(resourceGroup().id)}', 24)
-// output dataStorageName string            = take('${baseStorageName}${dataStorageNameSuffix}${uniqueString(resourceGroup().id)}', 24)

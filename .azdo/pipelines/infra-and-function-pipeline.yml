@@ -29,6 +29,7 @@ parameters:
       - DEV
       - QA
       - PROD
+      - DEV-QA-PROD
     default: DEV
   - name: runGHASScan
     displayName: Run GHAS Scan
@@ -50,6 +51,7 @@ stages:
   - template: pipes/infra-and-function-pipe.yml
     parameters:
       environments: ['${{ parameters.deployToEnvironment }}']
+      singleEnvironment: 'true'
       parseBicepOutputs: true
       runMSDevSecOpsScan: ${{ parameters.runMSDevSecOpsScan }}
       runGHASScan: ${{ parameters.runGHASScan }}

@@ -1,15 +1,13 @@
 // --------------------------------------------------------------------------------
 // Main Bicep file that creates all of the Azure Resources for one environment
 // --------------------------------------------------------------------------------
-param appName string = ''
+param appName string
 param environmentCode string = 'azd'
 param location string = resourceGroup().location
-//param keyVaultOwnerUserId string = ''
-
-param environmentSpecificFunctionName string = ''
 
 // optional parameters
-@allowed(['Standard_LRS','Standard_GRS','Standard_RAGRS'])
+param environmentSpecificFunctionName string = ''
+// @allowed(['Standard_LRS','Standard_GRS','Standard_RAGRS'])
 param storageSku string = 'Standard_LRS'
 param functionAppSku string = 'Y1'
 param functionAppSkuFamily string = 'Y'
@@ -17,6 +15,12 @@ param functionAppSkuTier string = 'Dynamic'
 
 @description('Add Role Assignments for the user assigned identity?')
 param addRoleAssignments bool = true
+
+@description('Run script to deplicate secrets?')
+param deDuplicateSecrets bool = true
+
+@description('Add this Admin User Id to KeyVault Access')
+param adminUserId string = ''
 
 // calculated variables disguised as parameters
 param runDateTime string = utcNow()
@@ -43,7 +47,7 @@ module resourceNames 'resourcenames.bicep' = {
 }
 
 // --------------------------------------------------------------------------------
-module logAnalyticsWorkspaceModule 'loganalyticsworkspace.bicep' = {
+module logAnalyticsWorkspaceModule './app/loganalyticsworkspace.bicep' = {
   name: 'logAnalytics${deploymentSuffix}'
   params: {
     logAnalyticsWorkspaceName: resourceNames.outputs.logAnalyticsWorkspaceName
@@ -53,23 +57,7 @@ module logAnalyticsWorkspaceModule 'loganalyticsworkspace.bicep' = {
 }
 
 // --------------------------------------------------------------------------------
-module identity 'identity.bicep' = {
-  name: 'app-identity${deploymentSuffix}'
-  params: {
-    identityName: resourceNames.outputs.userAssignedIdentityName
-    location: location
-  }
-}
-module roleAssignments 'role-assignments.bicep' = if (addRoleAssignments) {
-  name: 'identity-access${deploymentSuffix}'
-  params: {
-    storageAccountName: functionStorageModule.outputs.name
-    identityPrincipalId: identity.outputs.managedIdentityPrincipalId
-  }
-}
-
-// --------------------------------------------------------------------------------
-module functionStorageModule 'storageaccount.bicep' = {
+module functionStorageModule './app/storageaccount.bicep' = {
   name: 'functionstorage${deploymentSuffix}'
   params: {
     storageSku: storageSku
@@ -81,13 +69,80 @@ module functionStorageModule 'storageaccount.bicep' = {
   }
 }
 
-module functionModule 'functionapp.bicep' = {
+// --------------------------------------------------------------------------------
+module identity './security/identity.bicep' = {
+  name: 'appIdentity${deploymentSuffix}'
+  params: {
+    identityName: resourceNames.outputs.userAssignedIdentityName
+    location: location
+  }
+}
+module appRoleAssignments './security/roleassignments.bicep' = if (addRoleAssignments) {
+  name: 'appRoleAssignments${deploymentSuffix}'
+  params: {
+    identityPrincipalId: identity.outputs.managedIdentityPrincipalId
+    principalType: 'ServicePrincipal'
+    storageAccountName: functionStorageModule.outputs.name
+    keyVaultName:  keyVaultModule.outputs.name
+  }
+}
+module adminRoleAssignments './security/roleassignments.bicep' = if (addRoleAssignments) {
+  name: 'userRoleAssignments${deploymentSuffix}'
+  params: {
+    identityPrincipalId: adminUserId
+    principalType: 'User'
+    storageAccountName: functionStorageModule.outputs.name
+    keyVaultName:  keyVaultModule.outputs.name
+  }
+}
+
+
+// --------------------------------------------------------------------------------
+module keyVaultModule './security/keyvault.bicep' = {
+  name: 'keyVault${deploymentSuffix}'
+  params: {
+    keyVaultName: resourceNames.outputs.keyVaultName
+    location: location
+    commonTags: commonTags
+    adminUserObjectIds: [ adminUserId ]
+    applicationUserObjectIds: [ ]
+    workspaceId: logAnalyticsWorkspaceModule.outputs.id
+    managedIdentityPrincipalId: identity.outputs.managedIdentityPrincipalId
+    managedIdentityTenantId: identity.outputs.managedIdentityTenantId
+    publicNetworkAccess: 'Disabled'
+    allowNetworkAccess: 'Allow'
+    useRBAC: true
+  }
+}
+
+module keyVaultSecretList './security/keyvaultlistsecretnames.bicep' = if (deDuplicateSecrets) {
+  name: 'keyVaultSecretListNames${deploymentSuffix}'
+  params: {
+    keyVaultName: keyVaultModule.outputs.name
+    location: location
+    userManagedIdentityId: keyVaultModule.outputs.userManagedIdentityId
+  }
+}
+module keyVaultStorageSecret './security/keyvaultsecretstorageconnection.bicep' = {
+  name: 'keyVaultStorageSecret${deploymentSuffix}'
+  params: {
+    keyVaultName: keyVaultModule.outputs.name
+    secretName: 'azurefilesconnectionstring'
+    storageAccountName: functionStorageModule.outputs.name
+    existingSecretNames: deDuplicateSecrets ? keyVaultSecretList.outputs.secretNameList : ''
+  }
+}
+
+// --------------------------------------------------------------------------------
+module functionModule './app/functionapp.bicep' = {
   name: 'function${deploymentSuffix}'
-  dependsOn: [ roleAssignments ]
+  dependsOn: [ appRoleAssignments ]
   params: {
     functionAppName: resourceNames.outputs.functionAppName
     functionAppServicePlanName: resourceNames.outputs.functionAppServicePlanName
     functionInsightsName: resourceNames.outputs.functionInsightsName
+    managedIdentityId: identity.outputs.managedIdentityId
+    keyVaultName: keyVaultModule.outputs.name
 
     appInsightsLocation: location
     location: location
@@ -102,12 +157,13 @@ module functionModule 'functionapp.bicep' = {
   }
 }
 
-module functionAppSettingsModule 'functionappsettings.bicep' = {
+module functionAppSettingsModule './app/functionappsettings.bicep' = {
   name: 'functionAppSettings${deploymentSuffix}'
   params: {
     functionAppName: functionModule.outputs.name
     functionStorageAccountName: functionModule.outputs.storageAccountName
     functionInsightsKey: functionModule.outputs.insightsKey
+    keyVaultName: keyVaultModule.outputs.name
     customAppSettings: {
       OpenApi__HideSwaggerUI: 'false'
       OpenApi__HideDocument: 'false'
@@ -117,6 +173,7 @@ module functionAppSettingsModule 'functionappsettings.bicep' = {
   }
 }
 
+// --------------------------------------------------------------------------------
 output SUBSCRIPTION_ID string = subscription().subscriptionId
 output RESOURCE_GROUP_NAME string = resourceGroupName
 output HOST_NAME string = functionModule.outputs.hostname
