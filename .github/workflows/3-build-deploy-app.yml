@@ -20,7 +20,7 @@ on:
       runSmokeTest:
         description: 'Run Smoke Tests'
         required: false
-        default: 'true'
+        default: 'false'
         type: choice
         options:
           - true
