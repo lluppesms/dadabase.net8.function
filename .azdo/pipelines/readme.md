@@ -31,7 +31,7 @@ These Azure DevOps YML files were designed to run as multi-stage environment dep
 
 ---
 
-## 4. Creating the variable group "Dadabase.Function.Keys"
+## 4. Creating the variable group "DadABase.Function.Keys"
 
 To create this variable groups, customize and run this command in the Azure Cloud Shell.
 
@@ -43,7 +43,7 @@ Alternatively, you could define these variables in the Azure DevOps Portal on ea
    az pipelines variable-group create 
      --organization=https://dev.azure.com/<yourAzDOOrg>/ 
      --project='<yourAzDOProject>' 
-     --name Dadabase.Function.Keys 
+     --name DadABase.Function.Keys 
      --variables 
          appName='<yourInitials>-net8-func' 
          serviceConnectionName='<yourServiceConnection>' 

@@ -1,4 +1,4 @@
-﻿//namespace Dadabase.Function.Helpers;
+﻿//namespace DadABase.Function.Helpers;
 
 //public static class EntityMapping
 //{

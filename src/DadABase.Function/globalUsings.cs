@@ -1,4 +1,4 @@
-﻿global using Dadabase.Function.Helpers;
+﻿global using DadABase.Function.Helpers;
 global using DadABase.Data;
 global using DadABase.Repositories;
 global using Microsoft.Azure.Functions.Worker;

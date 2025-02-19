@@ -46,7 +46,7 @@ parameters:
 
 # ----------------------------------------------------------------------------------------------------
 variables:
-  - group: Dadabase.Function.Keys
+  - group: DadABase.Function.Keys
   - template: vars/var-service-connections.yml
 
 # ----------------------------------------------------------------------------------------------------

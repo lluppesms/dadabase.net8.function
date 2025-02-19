@@ -1,4 +1,4 @@
-namespace Dadabase.Function;
+namespace DadABase.Function;
 
 public class TriggerHealthCheck(ILoggerFactory loggerFactory)
 {
