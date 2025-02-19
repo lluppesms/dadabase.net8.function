@@ -80,11 +80,13 @@ jobs:
       run: dotnet restore "${{ inputs.rootDirectory }}"
 
     - name: Build Application
-      run: dotnet build "${{ inputs.rootDirectory }}/*.csproj" --configuration Release --no-restore --output ./output
+      run: dotnet build --configuration Release --no-restore --output ./output
+      working-directory: ${{ inputs.rootDirectory }}
 
     - name: Test Application
       if: inputs.testApplication == true
-      run: dotnet test "${{ inputs.testDirectory }}/*.csproj" --logger trx
+      run: dotnet test --logger trx
+      working-directory: ${{ inputs.testDirectory }}
       continue-on-error: true
 
     - name: Publish Test Results
@@ -95,8 +97,9 @@ jobs:
           **/TestResults/**/*.trx
       continue-on-error: true
 
-    - name: Publish
-      run: dotnet publish "${{ inputs.rootDirectory }}/${{ inputs.projectName }}.csproj" --configuration ${{ env.CONFIGURATION }} --no-build --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
+    # - name: Publish
+    #   run: dotnet publish --configuration ${{ env.CONFIGURATION }} --no-build --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
+    #   working-directory: ${{ inputs.rootDirectory }}
 
     - name: Save Publish Artifacts
       uses: actions/upload-artifact@v4
