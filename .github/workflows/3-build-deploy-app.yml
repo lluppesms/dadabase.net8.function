@@ -45,11 +45,13 @@ on:
 
 # ------------------------------------------------------------------------------------------------------------------------
 permissions:
+  # these are only required for workflows in private repositories (?)
   id-token: write
   contents: write
   actions: read
   pages: write
-  security-events: write
+  security-events: write # needed for security scan to write to logs
+  checks: write  # needed to write test results back to the run
 
 # ------------------------------------------------------------------------------------------------------------------------
 jobs:
