@@ -34,6 +34,10 @@ parameters:
       - PROD
       - DEV-QA-PROD
     default: DEV
+  - name: runUnitTests
+    displayName: Run Unit Tests
+    type: boolean
+    default: true
   - name: runGHASScan
     displayName: Run GHAS Scan
     type: boolean
@@ -55,6 +59,7 @@ stages:
     parameters:
       environments: ['${{ parameters.deployToEnvironment }}']
       singleEnvironment: 'true'
+      runUnitTests: ${{ parameters.runUnitTests }}
       runMSDevSecOpsScan: ${{ parameters.runMSDevSecOpsScan }}
       runGHASScan: ${{ parameters.runGHASScan }}
 
@@ -62,5 +67,6 @@ stages:
   - template: pipes/function-only-pipe.yml
     parameters:
       environments: ['DEV','QA','PROD']
+      runUnitTests: ${{ parameters.runUnitTests }}
       runMSDevSecOpsScan: ${{ parameters.runMSDevSecOpsScan }}
       runGHASScan: ${{ parameters.runGHASScan }}

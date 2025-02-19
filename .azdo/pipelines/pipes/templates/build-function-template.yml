@@ -1,9 +1,11 @@
 # ----------------------------------------------------------------------------------------------------
-# Template to build Azure Function and create artifacts
+# Template to build and test Azure Function and create artifacts
 # ----------------------------------------------------------------------------------------------------
 parameters: 
 - name: environmentName
   default:  'DEV'
+- name: runUnitTests
+  default: 'true'
 
 # ----------------------------------------------------------------------------------------------------
 jobs:
@@ -27,33 +29,111 @@ jobs:
     - ${{ if eq(lower(parameters.environmentName), 'prod') }}:
       - template: ../../vars/var-prod.yml
 
+    - name: rootDirectory
+      value: '$(System.DefaultWorkingDirectory)/$(appFolderName)/'
+    - name: projectRelativeDirectory
+      value: '$(appFolderName)/$(appProjectFolderName)'
+    - name: projectDirectory
+      value: '$(System.DefaultWorkingDirectory)/$(appFolderName)/$(appProjectFolderName)/'
+    - name: testDirectory
+      value: '$(System.DefaultWorkingDirectory)/$(appFolderName)/$(testFolderName)/'
+
+    - name: projectFullName
+      value: '$(appFolderName)/$(appProjectFolderName)/$(appProjectName).$(appProjectExtension)'
+    - name: projectFullPath
+      value: '$(System.DefaultWorkingDirectory)/$(projectFullName)'
+
+    - name: testRelativeDirectory
+      value: '$(appFolderName)/$(testFolderName)'
+    - name: testFullName
+      value: '$(appFolderName)/$(testFolderName)/$(testProjectName).$(appProjectExtension)'
+    - name: testFullPath
+      value: '$(System.DefaultWorkingDirectory)/$(testFullName)'
+
   steps:
   - task: Bash@3
-    displayName: 'Display Variables'
+    displayName: Display Variables and Files
     continueOnError: true
     inputs:
       targetType: 'inline'
       script: |
+        echo "projectDirectory=$(projectDirectory)"
+        echo "appFolderName=$(appFolderName)"
+        echo "appProjectName=$(appProjectName)"
+        echo "projectFullName=$(projectFullName)"
+        echo "projectFullPath=$(projectFullPath)"
+
+        echo "testDirectory=$(testDirectory)"
+        echo "testFolderName=$(testFolderName)"
+        echo "testProjectName=$(testProjectName)"
+        echo "testFullName=$(testFullName)"
+        echo "testFullPath=$(testFullPath)"
+
+        echo "dotnet restore $(projectRelativeDirectory)/*.csproj"
+        
         echo "Build.ArtifactStagingDirectory=$(Build.ArtifactStagingDirectory)"
         echo "System.DefaultWorkingDirectory=$(System.DefaultWorkingDirectory)"
+        echo "Build.SourcesDirectory=$(Build.SourcesDirectory)"
         echo "Build.BuildId=$(Build.BuildId)"
+
         echo "----------------------------------------"
         echo "##[group]Display All Environment Variables:"
         printenv | sort
         echo "##[endgroup]"
         echo "----------------------------------------"
         echo "##[group]Directory of pipeline workspace:"
-        tree -L 4 $(Pipeline.Workspace)
+        tree -L 6 $(Pipeline.Workspace)
         echo "##[endgroup]"
     
-  - task: DotNetCoreCLI@2
-    displayName: 'Build project'
+  - task: NuGetToolInstaller@1
+    displayName: 'Install Nuget'
+
+  - task: UseDotNet@2
+    displayName: Use dotnet 8.0
     inputs:
-      projects: '$(appFolderName)/*.csproj'
+      version: 8.0.x
+
+  - task: DotNetCoreCLI@2
+    displayName: Restore Project
+    continueOnError: true
+    inputs:
+      command: 'restore'
+      projects: '$(projectRelativeDirectory)/*.csproj'
+
+  - task: DotNetCoreCLI@2
+    displayName: Build project
+    inputs:
+      projects: '$(projectRelativeDirectory)/*.csproj'
       arguments: '--output publish_output --configuration Release'
 
+  # ------------------------------------------------------------------------------------------------------------------------
+  - ${{ if eq(lower(parameters.runUnitTests), 'true') }}:
+    - task: DotNetCoreCLI@2
+      displayName: Restore Tests
+      inputs:
+        command: 'restore'
+        projects: '$(testRelativeDirectory)/*.csproj'
+
+    - task: DotNetCoreCLI@2
+      displayName: Run Tests
+      inputs:
+        command: 'test'
+        publishTestResults: false
+        projects: '$(testRelativeDirectory)/*.csproj'
+        arguments: '--logger trx --results-directory "$(Build.SourcesDirectory)/TestResults/Coverage/" --collect "XPlat Code Coverage"'
+
+    - task: PublishTestResults@2
+      displayName: Publish Test Results
+      condition: succeededOrFailed()
+      inputs:
+        testResultsFormat: VSTest
+        testResultsFiles: '**/*.trx'
+        searchFolder: '$(Build.SourcesDirectory)/TestResults/Coverage/'
+        testRunTitle: 'Unit Tests'
+  # ------------------------------------------------------------------------------------------------------------------------
+
   - task: ArchiveFiles@2
-    displayName: 'Zip Output'
+    displayName: Zip Output
     inputs:
       rootFolderOrFile: '$(System.DefaultWorkingDirectory)/publish_output'
       includeRootFolder: false
@@ -62,8 +142,41 @@ jobs:
       replaceExistingArchive: true
 
   - task: PublishPipelineArtifact@1
-    displayName: 'Publish Artifact'
+    displayName: Publish Artifact
     inputs:
       targetPath: '$(Build.ArtifactStagingDirectory)'
       artifact: drop
       publishLocation: 'pipeline'
+
+# ------------------------------------------------------------------------------------------------------------------------
+  - ${{ if eq(lower(parameters.runUnitTests), 'true') }}:
+    - task: DotNetCoreCLI@2
+      displayName: Install Report Generator
+      condition: succeededOrFailed()
+      inputs:
+        command: custom
+        custom: tool
+        arguments: 'install -g dotnet-reportgenerator-globaltool'
+
+    - task: PowerShell@2
+      displayName: Create Code Coverage Report
+      condition: succeededOrFailed()
+      inputs:
+        targetType: 'inline'
+        script: reportgenerator -reports:$(Build.SourcesDirectory)/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/CodeCoverage -reporttypes:HtmlInline_AzurePipelines
+
+    - task: CmdLine@2
+      displayName: Display Files
+      condition: succeededOrFailed()
+      inputs:
+        script: |
+          echo "Directory of Build.SourcesDirectory:"
+          tree $(Build.SourcesDirectory)
+      continueOnError: true
+
+    - task: PublishCodeCoverageResults@2
+      displayName: Publish Code Coverage Report
+      condition: succeededOrFailed()
+      inputs:
+        codeCoverageTool: 'cobertura'
+        summaryFileLocation: '$(Build.SourcesDirectory)/**/coverage.cobertura.xml'

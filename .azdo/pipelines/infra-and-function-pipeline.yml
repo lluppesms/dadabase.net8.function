@@ -31,6 +31,10 @@ parameters:
       - PROD
       - DEV-QA-PROD
     default: DEV
+  - name: runUnitTests
+    displayName: Run Unit Tests
+    type: boolean
+    default: true
   - name: runGHASScan
     displayName: Run GHAS Scan
     type: boolean
@@ -53,6 +57,7 @@ stages:
       environments: ['${{ parameters.deployToEnvironment }}']
       singleEnvironment: 'true'
       parseBicepOutputs: true
+      runUnitTests: ${{ parameters.runUnitTests }}
       runMSDevSecOpsScan: ${{ parameters.runMSDevSecOpsScan }}
       runGHASScan: ${{ parameters.runGHASScan }}
 
@@ -61,5 +66,6 @@ stages:
     parameters:
       environments: ['DEV','QA','PROD']
       parseBicepOutputs: true
+      runUnitTests: ${{ parameters.runUnitTests }}
       runMSDevSecOpsScan: ${{ parameters.runMSDevSecOpsScan }}
       runGHASScan: ${{ parameters.runGHASScan }}

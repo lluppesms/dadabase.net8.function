@@ -26,15 +26,24 @@ variables:
     value: 'Standard_LRS'
 
   - name: appFolderName
-    value: 'src/DadABase.Function'
+    value: 'src'
   - name: appSolutionName
-    value: 'DadaBase.Function.Net8'
+    value: 'DadABase.Function.Net8'
+
   - name: appProjectFolderName
-    value: 'src/DadABase.Function'
+    value: 'DadABase.Function'
+  - name: appProjectName
+    value: 'DadABase.Function.Net8'
   - name: appProjectExtension
     value: 'csproj'
+
+  - name: testFolderName 
+    value: 'DadABase.Function.Tests'
+  - name: testProjectName
+    value: 'DadABase.Tests'
 
   - name: workingDirectoryInfra
     value: '/infra/bicep'
   - name: workingDirectoryIgnore
     value: '/Docs'
+

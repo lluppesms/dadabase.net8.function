@@ -9,6 +9,8 @@ parameters:
   default: 'false'
 - name: parseBicepOutputs
   default: false
+- name: runUnitTests
+  default: 'false'
 - name: runGHASScan
   default: 'false'
 - name: runMSDevSecOpsScan
@@ -37,6 +39,7 @@ stages:
   - template: templates/build-function-template.yml
     parameters:
       environmentName: 'DEV'
+      runUnitTests: ${{ parameters.runUnitTests }}
 
 # ----------------------------------------------------------------------------------------------------
 - ${{ each environmentName in parameters.environments }} :

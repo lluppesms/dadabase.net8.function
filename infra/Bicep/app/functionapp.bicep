@@ -189,7 +189,7 @@ resource functionAppResource 'Microsoft.Web/sites@2023-01-01' = {
     httpsOnly: true
     redundancyMode: 'None'
     publicNetworkAccess: publicNetworkAccess
-    storageAccountRequired: false
+    storageAccountRequired: true
     keyVaultReferenceIdentity: managedIdentityId // 'SystemAssigned'
   }
 }
