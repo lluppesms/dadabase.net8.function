@@ -4,7 +4,7 @@
 # You need to set up secrets in the GitHub Secrets Repository before running these workflows.
 #   See Docs\CreateGitHubSecrets\.md for details
 # ------------------------------------------------------------------------------------------------------------------------
-name: template.deploy.function
+name: z_template_functionapp_deploy
 run-name: Deploy Function App
 on:
   workflow_call:

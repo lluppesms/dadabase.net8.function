@@ -4,7 +4,7 @@
 # You need to set up secrets in the GitHub Secrets Repository before running these workflows.
 #   See Docs\CreateGitHubSecrets\.md for details
 # ------------------------------------------------------------------------------------------------------------------------
-name: template.functionapp.build
+name: z_template_functionapp_build
 run-name: Build Function App
 on:
   workflow_call:
@@ -80,7 +80,7 @@ jobs:
       run: dotnet restore "${{ inputs.rootDirectory }}"
 
     - name: Build Application
-      run: dotnet build --configuration Release --no-restore --output ./output
+      run: dotnet build --configuration ${{ env.CONFIGURATION }} --output ./output
       working-directory: ${{ inputs.rootDirectory }}
 
     - name: Test Application
@@ -96,10 +96,6 @@ jobs:
         files: |
           **/TestResults/**/*.trx
       continue-on-error: true
-
-    # - name: Publish
-    #   run: dotnet publish --configuration ${{ env.CONFIGURATION }} --no-build --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
-    #   working-directory: ${{ inputs.rootDirectory }}
 
     - name: Save Publish Artifacts
       uses: actions/upload-artifact@v4
