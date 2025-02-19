@@ -80,15 +80,8 @@ jobs:
       run: dotnet restore "${{ inputs.rootDirectory }}"
 
     - name: Build Application
-      shell: bash
-      run: |
-        pushd './${{ inputs.rootDirectory }}'
-        dotnet build --configuration Release --output ./output
-        popd
-        
-    # - name: Build Application
-    #   run: dotnet build --configuration ${{ env.CONFIGURATION }} --output ./output
-    #   working-directory: ${{ inputs.rootDirectory }}
+      run: dotnet build --configuration ${{ env.CONFIGURATION }} --output ./output
+      working-directory: ${{ inputs.rootDirectory }}
 
     - name: Test Application
       if: inputs.testApplication == true
@@ -109,6 +102,7 @@ jobs:
       with:
         name: ${{ env.artifactName }}
         path: ${{ inputs.rootDirectory }}/output
+        include-hidden-files: true
 
     - name: List All Files
       if: inputs.listFilesAfterBuild == true
