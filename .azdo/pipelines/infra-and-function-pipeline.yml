@@ -38,7 +38,7 @@ parameters:
   - name: runSmokeTests
     displayName: Run Smoke Tests
     type: boolean
-    default: false
+    default: true
   - name: runGHASScan
     displayName: Run GHAS Scan
     type: boolean
