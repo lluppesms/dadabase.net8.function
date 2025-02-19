@@ -15,7 +15,24 @@ on:
       rootDirectory:
         required: true
         type: string
-    
+      projectName:
+        required: true
+        type: string
+      testDirectory:
+        required: false
+        type: string
+      testProjectName:
+        required: false
+        type: string
+      listFilesAfterBuild:
+        required: false
+        type: boolean
+        default: false
+      testApplication:
+        required: false
+        type: boolean
+        default: false
+  
 # ------------------------------------------------------------------------------------------------------------------------
 jobs:
   build:
@@ -42,22 +59,31 @@ jobs:
       run: dotnet restore "${{ inputs.rootDirectory }}"
 
     - name: Build Application
-      shell: bash
-      run: |
-        pushd './${{ inputs.rootDirectory }}'
-        dotnet build --configuration Release --output ./output
-        popd
+      run: dotnet build "${{ inputs.rootDirectory }}/${{ inputs.projectName }}.csproj" --configuration Release --no-restore --output ./output
 
-    # - name: List Files After Build
-    #   run: 
-    #     tree ${{ env.GITHUB_ACTION_PATH }}
-    #   continue-on-error: true
+    - name: Test Application
+      if: inputs.testApplication == true
+      run: dotnet test "${{ inputs.testDirectory }}/${{ inputs.testProjectName }}.csproj" --logger trx
+      continue-on-error: true
 
-    #- name: Test Application
-    #  run: dotnet test "${{ inputs.rootDirectory }}" --no-build
+    - name: Publish Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      if: inputs.testApplication == true
+      with:
+        files: |
+          **/TestResults/**/*.trx
+      continue-on-error: true
+
+    - name: Publish
+      run: dotnet publish "${{ inputs.rootDirectory }}/${{ inputs.projectName }}.csproj" --configuration ${{ env.CONFIGURATION }} --no-build --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
 
     - name: Save Publish Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: ${{ env.artifactName }}
         path: ${{ inputs.rootDirectory }}/output
+
+    - name: List All Files
+      if: inputs.listFilesAfterBuild == true
+      run: 
+        tree ${{ github.action_path }}

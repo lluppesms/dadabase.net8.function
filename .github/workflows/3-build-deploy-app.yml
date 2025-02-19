@@ -60,6 +60,9 @@ jobs:
     with:
       envCode: ${{ inputs.deployEnvironment }}
       rootDirectory: 'src/DadABase.Function'
+      projectName: 'DadABase.Function.Net8'
+      testDirectory: 'src/DadABase.Function.Tests'
+      testProjectName: 'DadABase.Tests'
 
 # ------------------------------------------------------------------------------------------------------------------------
   deploy-app-demo:
