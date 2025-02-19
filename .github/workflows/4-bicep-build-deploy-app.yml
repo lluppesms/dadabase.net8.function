@@ -17,6 +17,14 @@ on:
           - dev
           - qa
           - prod
+      runSmokeTest:
+        description: 'Run Smoke Tests'
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - true
+          - false
       runSecurityScan:
         description: 'Run Security Scan'
         required: false
@@ -65,6 +73,8 @@ jobs:
       projectName: 'DadABase.Function.Net8'
       testDirectory: 'src/DadABase.Function.Tests'
       testProjectName: 'DadABase.Tests'
+      testApplication: true
+      listFilesAfterBuild: true
 
 # ------------------------------------------------------------------------------------------------------------------------
   create-infra:
