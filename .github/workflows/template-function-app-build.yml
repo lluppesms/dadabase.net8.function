@@ -80,8 +80,15 @@ jobs:
       run: dotnet restore "${{ inputs.rootDirectory }}"
 
     - name: Build Application
-      run: dotnet build --configuration ${{ env.CONFIGURATION }} --output ./output
-      working-directory: ${{ inputs.rootDirectory }}
+      shell: bash
+      run: |
+        pushd './${{ inputs.rootDirectory }}'
+        dotnet build --configuration Release --output ./output
+        popd
+        
+    # - name: Build Application
+    #   run: dotnet build --configuration ${{ env.CONFIGURATION }} --output ./output
+    #   working-directory: ${{ inputs.rootDirectory }}
 
     - name: Test Application
       if: inputs.testApplication == true
