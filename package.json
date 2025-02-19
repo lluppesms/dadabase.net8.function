@@ -1,0 +1,14 @@
+{
+  "name": "dadabase.net8.function.azdo",
+  "version": "1.0.0",
+  "description": "This repository is simple function app that can be used as an example for CICD deploys, unit testing, Playwright UI testing, and integration of all of that into pipelines.",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.48.2",
+    "@types/node": "^20.11.0"
+  }
+}

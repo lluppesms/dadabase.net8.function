@@ -35,6 +35,10 @@ parameters:
     displayName: Run Unit Tests
     type: boolean
     default: true
+  - name: runSmokeTests
+    displayName: Run Smoke Tests
+    type: boolean
+    default: false
   - name: runGHASScan
     displayName: Run GHAS Scan
     type: boolean
@@ -46,7 +50,7 @@ parameters:
 
 # ----------------------------------------------------------------------------------------------------
 variables:
-  - group: DadABase.Function.Keys
+  - group: Dadabase.Function.Keys
   - template: vars/var-service-connections.yml
 
 # ----------------------------------------------------------------------------------------------------
@@ -58,6 +62,7 @@ stages:
       singleEnvironment: 'true'
       parseBicepOutputs: true
       runUnitTests: ${{ parameters.runUnitTests }}
+      runSmokeTests: ${{ parameters.runSmokeTests }}
       runMSDevSecOpsScan: ${{ parameters.runMSDevSecOpsScan }}
       runGHASScan: ${{ parameters.runGHASScan }}
 
@@ -67,5 +72,6 @@ stages:
       environments: ['DEV','QA','PROD']
       parseBicepOutputs: true
       runUnitTests: ${{ parameters.runUnitTests }}
+      runSmokeTests: ${{ parameters.runSmokeTests }}
       runMSDevSecOpsScan: ${{ parameters.runMSDevSecOpsScan }}
       runGHASScan: ${{ parameters.runGHASScan }}

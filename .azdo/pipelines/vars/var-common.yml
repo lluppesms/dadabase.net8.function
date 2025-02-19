@@ -47,3 +47,7 @@ variables:
   - name: workingDirectoryIgnore
     value: '/Docs'
 
+  - name: playwrightAPITestType
+    value: 'api'
+  - name: playwrightAPITestPath
+    value: 'playwright/api-tests'

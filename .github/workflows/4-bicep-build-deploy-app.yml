@@ -17,18 +17,34 @@ on:
           - dev
           - qa
           - prod
-      runSmokeTest:
-        description: 'Run Smoke Tests'
+      runSecurityScan:
+        description: 'Run Security Scan'
         required: false
         default: 'false'
         type: choice
         options:
           - true
           - false
-      runSecurityScan:
-        description: 'Run Security Scan'
+      runCreateInfra:
+        description: 'Deploy Bicep'
         required: false
-        default: 'false'
+        default: 'true'
+        type: choice
+        options:
+          - true
+          - false
+      runBuildDeploy:
+        description: 'Build and Deploy App'
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - true
+          - false
+      runSmokeTest:
+        description: 'Run Smoke Tests'
+        required: false
+        default: 'true'
         type: choice
         options:
           - true
@@ -66,6 +82,7 @@ jobs:
   build-app:
     name: Build Function App
     uses: ./.github/workflows/template-function-app-build.yml
+    if: inputs.runBuildDeploy == 'true' || inputs.runSmokeTest == 'true'
     secrets: inherit
     with:
       envCode: ${{ inputs.deployEnvironment }}
@@ -81,6 +98,7 @@ jobs:
     name: Create Infra ${{ inputs.deployEnvironment }}
     needs: build-app
     uses: ./.github/workflows/template-create-infra.yml
+    if: inputs.runCreateInfra == 'true' || inputs.runBuildDeploy == 'true'
     secrets: inherit
     with:
       envCode: ${{ inputs.deployEnvironment }}
@@ -90,10 +108,23 @@ jobs:
       parameterFileReplaceTokens: 'true'
 
 # ------------------------------------------------------------------------------------------------------------------------
-  deploy-app-demo:
+  deploy-app:
     name: Deploy App
     needs: create-infra
+    if: inputs.runBuildDeploy == 'true' || inputs.runSmokeTest == 'true'
     uses: ./.github/workflows/template-function-app-deploy.yml
     secrets: inherit
     with:
       envCode: ${{ inputs.deployEnvironment }}
+
+# ------------------------------------------------------------------------------------------------------------------------
+  run-smoke-test:
+    name: Smoke Test ${{ inputs.deployEnvironment }}
+    uses: ./.github/workflows/template-smoke-test.yml
+    if: inputs.runSmokeTest == 'true'
+    needs: deploy-app
+    secrets: inherit
+    with:
+      envCode: ${{ inputs.deployEnvironment }}
+      testPath: 'playwright/api-tests'
+      testType: 'api'

@@ -9,6 +9,8 @@ parameters:
   default: 'false'
 - name: runUnitTests
   default: 'false'
+- name: runSmokeTests
+  default: 'false'
 - name: runGHASScan
   default: 'false'
 - name: runMSDevSecOpsScan
@@ -50,3 +52,18 @@ stages:
     - template: templates/deploy-function-template.yml
       parameters:
         environmentName: ${{ environmentName }}
+
+  - ${{ if eq(lower(parameters.runSmokeTests), 'true') }}:
+    - stage: SmokeTest${{ environmentName }}App
+      displayName: Smoke Test ${{ environmentName }}
+      dependsOn: DeployApp${{ environmentName }}
+      condition: succeeded('DeployApp${{ environmentName }}')
+      variables:
+        - template: ../vars/var-common.yml
+      jobs:
+      - template: templates/playwright-template.yml
+        parameters:
+          environment: ${{ environmentName }}
+          testType: '${{ variables.playwrightAPITestType }}'
+          testPath: ${{ variables.playwrightAPITestPath }}
+          debug: true

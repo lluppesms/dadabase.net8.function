@@ -1,6 +1,6 @@
 # ----------------------------------------------------------------------------------------------------
 # Pipeline to deploy a Function App
-# See readme file for info about variable group "DadABase.Function.Keys"
+# See readme file for info about variable group "Dadabase.Function.Keys"
 # ----------------------------------------------------------------------------------------------------
 name: $(date:yyyy).$(date:MM).$(date:dd)$(rev:.r)
 pool:
@@ -53,7 +53,7 @@ parameters:
 
 # ----------------------------------------------------------------------------------------------------
 variables:
-  - group: DadABase.Function.Keys
+  - group: Dadabase.Function.Keys
   - template: vars/var-service-connections.yml
 
 # ----------------------------------------------------------------------------------------------------
