@@ -50,6 +50,27 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
+    - name: Display Variables and Files
+      run: |-
+        echo "rootDirectory=${{ inputs.rootDirectory }}"
+        echo "projectName=${{ inputs.projectName }}"
+        echo "testDirectory=${{ inputs.testDirectory }}"
+        echo "testProjectName=${{ inputs.testProjectName }}"
+        echo "listFilesAfterBuild=${{ inputs.listFilesAfterBuild }}"
+        echo "testApplication=${{ inputs.testApplication }}"
+
+        echo "---------------------------------"
+        echo "##[group]All Variables:"
+        echo '${{ toJSON(env) }}'
+        echo '${{ toJSON(vars) }}'
+        echo '${{ toJSON(secrets) }}'
+        echo "##[endgroup]"
+        echo "---------------------------------"
+        echo "##[group]Directory of ${{ github.workspace  }}"
+        tree -R ${{ github.workspace  }}
+        echo "##[endgroup]"
+      continue-on-error: true
+
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v3
       with:
@@ -59,11 +80,11 @@ jobs:
       run: dotnet restore "${{ inputs.rootDirectory }}"
 
     - name: Build Application
-      run: dotnet build "${{ inputs.rootDirectory }}/${{ inputs.projectName }}.csproj" --configuration Release --no-restore --output ./output
+      run: dotnet build "${{ inputs.rootDirectory }}/*.csproj" --configuration Release --no-restore --output ./output
 
     - name: Test Application
       if: inputs.testApplication == true
-      run: dotnet test "${{ inputs.testDirectory }}/${{ inputs.testProjectName }}.csproj" --logger trx
+      run: dotnet test "${{ inputs.testDirectory }}/*.csproj" --logger trx
       continue-on-error: true
 
     - name: Publish Test Results
