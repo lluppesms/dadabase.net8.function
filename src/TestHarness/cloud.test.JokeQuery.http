@@ -1,34 +1,34 @@
 # You can also use the Swagger UI: https://yourURL.azurewebsites.net/api/swagger/ui
 
 @baseUrl = https://yourURL.azurewebsites.net/api
-@FunctionMasterKey = enterkeyhere
+//@FunctionMasterKey = 
 
 ### ---------------------------------------------------------------------------
 ### Get a joke with plain text
 GET {{baseUrl}}/RandomJoke HTTP/1.1
-x-functions-key: {{FunctionMasterKey}}
+
 
 ### ---------------------------------------------------------------------------
 ### Get a joke with json formatting
 GET {{baseUrl}}/RandomJokeJson HTTP/1.1
-x-functions-key: {{FunctionMasterKey}}
+//x-functions-key: {{FunctionMasterKey}}
 
 ### ---------------------------------------------------------------------------
 ### Search for jokes
 GET {{baseUrl}}/search/cars HTTP/1.1
-x-functions-key: {{FunctionMasterKey}}
+//x-functions-key: {{FunctionMasterKey}}
 
 ### ---------------------------------------------------------------------------
 ### Get list of categories
 GET {{baseUrl}}/categories HTTP/1.1
-x-functions-key: {{FunctionMasterKey}}
+//x-functions-key: {{FunctionMasterKey}}
 
 ### ---------------------------------------------------------------------------
 ### Search for jokes with text in a category
 GET {{baseUrl}}/search/car/Christmas HTTP/1.1
-x-functions-key: {{FunctionMasterKey}}
+//x-functions-key: {{FunctionMasterKey}}
 
 ### ---------------------------------------------------------------------------
 ### Search for all jokes in a category
 GET {{baseUrl}}/category/Christmas HTTP/1.1
-x-functions-key: {{FunctionMasterKey}}
+//x-functions-key: {{FunctionMasterKey}}

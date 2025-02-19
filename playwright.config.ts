@@ -43,8 +43,8 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: 'https://localhost:44349/',
-    //baseURL: 'http://https://lll-az-dbf-dev.azurewebsites.net/',
+    //baseURL: 'https://localhost:44349/',
+    baseURL: 'http://lll-az-dbf-dev.azurewebsites.net/',
 
     // baseURL: process.env.CI ? 
     //   process.env.TEST_ENVIRONMENT == 'PROD' ? 'http://lll-dadabase.azurewebsites.net' :
