@@ -29,12 +29,12 @@ jobs:
     - name: testResultsFileName
       value: 'playwright-results-${{ parameters.testType }}-${{ parameters.environment }}.xml'
     - name: testResultsFullPath
-      value: '$(System.DefaultWorkingDirectory)\$(testResultsFolderName)\$(testResultsFileName)'
+      value: '$(System.DefaultWorkingDirectory)/$(testResultsFolderName)/$(testResultsFileName)'
 
     - name: configFileName
       value: 'playwright.config.cicd.ts'
     - name: configFileFullPath
-      value: '$(Pipeline.Workspace)\s\$(configFileName)'
+      value: '$(Pipeline.Workspace)/s/$(configFileName)'
 
     - name: pipelineArtifactName
       value: 'playwright-results-${{ parameters.testType }}-${{ parameters.environment }}'
@@ -49,6 +49,7 @@ jobs:
   steps:
   - ${{ if eq(true, parameters.debug) }}:
     - task: CmdLine@2
+      displayName: 'Display Variables and Tree'
       inputs:
         script: |
           echo "environment=${{ parameters.environment }}"
@@ -67,10 +68,18 @@ jobs:
           echo "PLAYWRIGHT_BASE_URL=$(PLAYWRIGHT_BASE_URL)"
           echo "PLAYWRIGHT_TEST_PATH=$(PLAYWRIGHT_TEST_PATH)"
 
-          echo "Directory of pipeline workspace $(Pipeline.Workspace):"
-          tree $(Pipeline.Workspace)
-          dir $(Pipeline.Workspace) /s
-      displayName: 'Display Variables and Tree'
+          echo "----------------------------------------"
+          echo "##[group]Display All Environment Variables:"
+          printenv | sort
+          echo "##[endgroup]"
+          echo "------------------------------------------------"
+          echo "##[group]Directory of Project Files: $(Build.SourcesDirectory)/$(appProjectFolderName)"
+          tree -L 4 $(Build.SourcesDirectory)/$(appProjectFolderName)
+          echo "##[endgroup]"
+          echo "------------------------------------------------"
+          echo "##[group]Directory of Full Staging Directory: $(Build.SourcesDirectory)"
+          tree -L 4 $(Build.SourcesDirectory)
+          echo "##[endgroup]"
       continueOnError: true
 
   - task: qetza.replacetokens.replacetokens-task.replacetokens@5
@@ -126,7 +135,6 @@ jobs:
         script: |
           echo "Directory of pipeline workspace:"
           tree $(Pipeline.Workspace)
-          dir $(Pipeline.Workspace) /s
       condition: succeededOrFailed()
       
   - task: PublishTestResults@2
