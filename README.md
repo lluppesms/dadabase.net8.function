@@ -1,4 +1,4 @@
-# .NET 8 Function Dad Joke API Example
+# Lyle's Dad-A-Base Function Example
 
 Where does a geeky Dad store all of his Dad jokes? In a dad-a-base, of course!
 
@@ -10,7 +10,9 @@ This repository is an example of deploying a .NET 8 app into an Azure Function. 
 
 This project is intended as a good example of using Infrastructure as Code (IaC) to deploy and manage the Azure resources, utilizing [Bicep](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/overview) to deploy Azure resources declaratively.
 
-The project also has fully automated CI/CD pipelines to deploy both the infrastructure and the application, so you can literally run one pipeline and have it create the Azure Resources, build the program, unit test the program, deploy the program to Azure, and run [Playwright](https://playwright.dev/dotnet/) smoke tests after it is deployed.
+The project also has fully automated CI/CD pipelines to deploy both the infrastructure and the application, so you can literally run [one pipeline](./.github/workflows/4-bicep-build-deploy-app.yml) and have it create the Azure Resources, build the program, unit test the program, deploy the program to Azure, and run [Playwright](https://playwright.dev/dotnet/) smoke tests after it is deployed.
+
+The pipelines and actions are all built modularly using templates, so you can snap them into new pipelines or use them in other projects.
 
 ---
 
