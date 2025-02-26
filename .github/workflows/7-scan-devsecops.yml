@@ -4,9 +4,10 @@
 name: 7.scan.devsecops.scheduled
 
 on:
-    workflow_dispatch:
-#     schedule:
-#     - cron: '27 3 * * 1'
+  workflow_dispatch:
+  # run this once a month on the 1st day of the month
+  schedule:
+    - cron: '0 0 1 * *'
 
 # ------------------------------------------------------------------------------------------------------------------------
 permissions:
