@@ -20,7 +20,7 @@ Deployment Options include:
 
 * [Deploy using Azure DevOps Pipelines](./.azdo/pipelines/readme.md)
 * [Deploy using GitHub Actions](./.github/workflows-readme.md)
-* [Deploy using AZD Command Line Tool](./Docs/AzdDeploy.md)
+* [Deploy using AZD Command Line Tool](./.azure/readme.md)
 
 ---
 
