@@ -1,0 +1,42 @@
+# ------------------------------------------------------------------------------------------------------------------------
+# GHA Workflow to scan and build WebApp on Pull Request - no app or bicep deploy
+# ------------------------------------------------------------------------------------------------------------------------
+# FYI: You need to set up some secrets before running this workflows - see CreateGitHubSecrets.md for details.
+# ------------------------------------------------------------------------------------------------------------------------
+name: 6.scan.build.pr
+
+on: 
+  pull_request:
+  workflow_dispatch:
+
+# ------------------------------------------------------------------------------------------------------------------------
+permissions:
+  id-token: write
+  contents: read
+  actions: read
+  pages: write
+  security-events: write
+
+# ------------------------------------------------------------------------------------------------------------------------
+jobs:
+  scan-code:
+    name: Scan Source Code
+    uses: ./.github/workflows/template-scan-code.yml
+    secrets: inherit
+    with:
+      runSecurityScan: true
+
+# ------------------------------------------------------------------------------------------------------------------------
+  build-app:
+    name: Build WebApp
+    uses: ./.github/workflows/template-webapp-build.yml
+    needs: scan-code
+    secrets: inherit
+    with:
+      envCode: 'dev'
+      rootDirectory: '${{ vars.APP_PROJECT_FOLDER_NAME }}'
+      projectName: '${{ vars.APP_PROJECT_NAME }}'
+      testDirectory: '${{ vars.APP_TEST_FOLDER_NAME }}'
+      testProjectName: '${{ vars.APP_TEST_PROJECT_NAME }}'
+      testApplication: true
+      listFilesAfterBuild: true
