@@ -108,10 +108,10 @@ jobs:
       continue-on-error: true
 
     # https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation-create-trust
+      # Login option using OICD Federated Credentials
     - name: Login to Azure
       if: ${{ inputs.runCreateInfra }}
       uses: azure/login@v2
-      # Login option using OICD Federated Credentials
       with:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -124,18 +124,35 @@ jobs:
       run: 
         az group create --name ${{ env.generatedResourceGroupName }} --location ${{ vars.RESOURCEGROUP_LOCATION }} --tags Environment=${{ inputs.envCode }}
 
+    # - name: Deploy Azure Resources
+    #   uses: azure/arm-deploy@v2
+    #   if: ${{ inputs.runCreateInfra }}
+    #   id: deploy-bicep
+    #   with:
+    #     scope: resourcegroup
+    #     region: ${{ vars.RESOURCEGROUP_LOCATION }}
+    #     deploymentName: ${{ inputs.templateFile }}-rg-${{ vars.RESOURCEGROUP_LOCATION }}-${{ steps.get-date.outputs.DATE_TIME_STAMP}}
+    #     resourceGroupName: ${{ env.generatedResourceGroupName }}
+    #     template: ${{ inputs.templatePath }}${{ inputs.templateFile }}
+    #     parameters: ${{ inputs.templatePath }}${{ inputs.parameterFile }}
+    #     deploymentMode: ${{ inputs.deploymentMode }} # Must be: Incremental | Complete | Validation
+
+    # The azure/arm-deploy action is being deprecated, replaced by azure/bicep-deploy
+    # See: https://github.com/Azure/arm-deploy (old) vs https://github.com/azure/bicep-deploy (new)
+    # Note: 'failOnStdErr' is not supported in bicep-deploy... will that be an issue in GHA where warnings are treated as errors???
     - name: Deploy Azure Resources
-      uses: azure/arm-deploy@v2
+      uses: azure/bicep-deploy@v2
       if: ${{ inputs.runCreateInfra }}
-      id: deploy-bicep
+      id: deploy-bicep-rg
       with:
-        scope: resourcegroup
-        region: ${{ vars.RESOURCEGROUP_LOCATION }}
-        deploymentName: ${{ inputs.templateFile }}-rg-${{ vars.RESOURCEGROUP_LOCATION }}-${{ steps.get-date.outputs.DATE_TIME_STAMP}}
-        resourceGroupName: ${{ env.generatedResourceGroupName }}
-        template: ${{ inputs.templatePath }}${{ inputs.templateFile }}
-        parameters: ${{ inputs.templatePath }}${{ inputs.parameterFile }}
-        deploymentMode: ${{ inputs.deploymentMode }} # Must be: Incremental | Complete | Validation
+        scope: resourceGroup
+        name: ${{ inputs.templateFile }}-rg-${{ vars.RESOURCEGROUP_LOCATION }}-${{ steps.get-date.outputs.DATE_TIME_STAMP}}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        resource-group-name: ${{ env.generatedResourceGroupName }}
+        template-file: ${{ inputs.templatePath }}${{ inputs.templateFile }}
+        parameters-file: ${{ inputs.templatePath }}${{ inputs.parameterFile }}
+        type: deployment
+        operation: create #  ${{ inputs.bicepDeploymentMode }} # Must be: create | validate | whatIf
 
     - name: Display Output
       if: ${{ inputs.runCreateInfra }}
