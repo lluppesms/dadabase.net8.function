@@ -1,5 +1,6 @@
 
 var host = new HostBuilder()
+    .ConfigureFunctionsWebApplication()
     .ConfigureFunctionsWorkerDefaults(
       builder =>
       {
